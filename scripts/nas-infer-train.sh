@@ -2,22 +2,23 @@
 # bash ./scripts/nas-infer-train.sh cifar10 SETN 256 -1
 echo script name: $0
 echo $# arguments
-if [ "$#" -ne 4 ] ;then
-  echo "Input illegal number of parameters " $#
-  echo "Need 4 parameters for dataset and the-model-name and epochs and LR and the-batch-size and the-random-seed"
-  exit 1
-fi
-if [ "$TORCH_HOME" = "" ]; then
-  echo "Must set TORCH_HOME envoriment variable for data dir saving"
-  exit 1
-else
-  echo "TORCH_HOME : $TORCH_HOME"
-fi
+#if [ "$#" -ne 4 ] ;then
+#  echo "Input illegal number of parameters " $#
+#  echo "Need 4 parameters for dataset and the-model-name and epochs and LR and the-batch-size and the-random-seed"
+#  exit 1
+#fi
+#if [ "$TORCH_HOME" = "" ]; then
+#  echo "Must set TORCH_HOME envoriment variable for data dir saving"
+#  exit 1
+#else
+#  echo "TORCH_HOME : $TORCH_HOME"
+#fi
 
 dataset=$1
 model=$2
 batch=$3
 rseed=$4
+root=/home2/lgfm95/cifar10/
 
 if [ ${dataset} == 'cifar10' ] || [ ${dataset} == 'cifar100' ]; then
   xpath=$TORCH_HOME/cifar.python
@@ -37,10 +38,10 @@ SAVE_ROOT="./output"
 
 save_dir=${SAVE_ROOT}/nas-infer/${dataset}-${model}-${batch}
 
-python --version
+python3 --version
 
-python ./exps/basic-main.py --dataset ${dataset} \
-	--data_path ${xpath} --model_source nas \
+python3 ./exps/basic-main.py --dataset ${dataset} \
+	--data_path ${root} --model_source nas \
 	--model_config ./configs/archs/NAS-${base}-${model}.config \
 	--optim_config ./configs/opts/NAS-${base}.config \
 	--procedure    basic \
