@@ -54,7 +54,7 @@ def main(args):
 
     if args.name == "mnist" or args.name == "fashion":
         base_model.stem.conv.in_channels = 1
-        # base_model.stem.conv = torch.conv2d(1, )
+
     flop, param = get_model_infos(base_model, xshape)
     logger.log('model ====>>>>:\n{:}'.format(base_model))
     logger.log('model information : {:}'.format(base_model.get_message()))

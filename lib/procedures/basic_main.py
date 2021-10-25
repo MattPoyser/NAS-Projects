@@ -40,6 +40,7 @@ def procedure(xloader, network, criterion, scheduler, optimizer, mode, config, e
     batch_size = full_config.batch_size
 
     for i, (inputs, targets) in enumerate(xloader):
+        print(inputs.shape, )
         if mode == 'train': scheduler.update(None, 1.0 * i / len(xloader))
         # measure data loading time
         data_time.update(time.time() - end)
@@ -48,7 +49,7 @@ def procedure(xloader, network, criterion, scheduler, optimizer, mode, config, e
 
         if mode == 'train': optimizer.zero_grad()
 
-        raise AttributeError(network)
+        # raise AttributeError(network)
         features, logits = network(inputs)
         if isinstance(logits, list):
             assert len(logits) == 2, 'logits must has {:} items instead of {:}'.format(2, len(logits))
