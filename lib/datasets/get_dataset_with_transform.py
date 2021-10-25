@@ -18,6 +18,9 @@ from subloader import SubDataset
 
 Dataset2Class = {'cifar10': 10,
                  'cifar100': 100,
+                 'mnist': 10,
+                 'fashion': 10,
+                 'imagenet': 1000,
                  'imagenet-1k-s': 1000,
                  'imagenet-1k': 1000,
                  'ImageNet16': 1000,
