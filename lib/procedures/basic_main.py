@@ -14,10 +14,10 @@ def basic_train(xloader, network, criterion, scheduler, optimizer, optim_config,
     return loss, acc1, acc5, hardness, correct
 
 
-def basic_valid(xloader, network, criterion, optim_config, extra_info, print_freq, logger):
+def basic_valid(xloader, network, criterion, optim_config, extra_info, print_freq, logger, full_config):
     with torch.no_grad():
-        loss, acc1, acc5 = procedure(xloader, network, criterion, None, None, 'valid', None, extra_info, print_freq,
-                                     logger)
+        loss, acc1, acc5, _, _ = procedure(xloader, network, criterion, None, None, 'valid', None, extra_info, print_freq,
+                                     logger, full_config)
     return loss, acc1, acc5
 
 
