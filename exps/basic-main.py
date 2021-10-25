@@ -21,7 +21,6 @@ from log_utils import AverageMeter, time_string, convert_secs2time
 import csv
 import os
 import numpy as np
-import torch.nn.functional as F
 
 
 g_config = None
@@ -228,48 +227,6 @@ def save_indices(data, epoch, images=None):
             with open(f'/hdd/PhD/nas/gdas/tempSave/curriculums/{g_config.name}/indices_{g_config.name}_{epoch}.csv', 'w') as csv_file:
                 csv_writer = csv.writer(csv_file, delimiter=' ')
                 csv_writer.writerow(data)
-
-
-# low value for hardness means harder.
-def get_hardness(output, target, is_multi):
-    if not is_multi:
-        # currently a binary association between correct classication => 0.8
-        # we want it to be a softmax representation. if we instead take crossentropy loss of each individual cf target
-        _, predicted = torch.max(output.data, 1)
-        confidence = F.softmax(output, dim=1)
-        hardness_scaler = np.where((predicted == target), 1, 0.1) # if correct, simply use confidence as measure of hardness
-        # therefore if model can easily say yep this is object X, then confidence will be high. if it only just manages to identify
-        # object X, confidence if lower
-        # if object X is misclassified, hardness needs to be lower still.
-        # assumes that it does not confidently misclassify.
-        hardness = [(confidence[i][predicted[i]] * hardness_scaler[i]).item() for i in range(output.size(0))]
-    else:
-        output = torch.sigmoid(output.float()).detach()
-        output[output>0.5] = 1
-        output[output<=0.5] = 0
-        confidence = F.softmax(output, dim=1)
-
-        hardness_scaler = []
-        hardness = []
-        assert len(output) == len(target) # should both be equal to batch size
-        for q in range(len(output)):
-            assert len(output[q]) == len(target[q]) # should both be equal to num_classes eg 184
-            correct_avg = (np.array(output[q]) == np.array(target[q])).sum() / len(output[q])
-            if correct_avg > 0.5: # this could be another threshold we change, or have it == hardness threshold
-                hardness_scaler.append(1)
-            else:
-                hardness_scaler.append(0.1)
-
-            correct = np.where(np.array(output[q]) == np.array(target[q]))[0]
-            hardness_value = [confidence[q][i] * 1 if i in correct else confidence[q][i] * 0.1 for i in range(len(output[q]))]
-            hardness.append(sum(hardness_value) / len(output[q]))
-
-
-        hardness_scaler = np.asarray(hardness_scaler)
-        hardness = np.array(hardness)
-        # raise AttributeError(output, target, hardness_scaler, hardness)
-
-    return hardness, hardness_scaler
 
 
 def get_epoch_type(epoch, hardness, top1):

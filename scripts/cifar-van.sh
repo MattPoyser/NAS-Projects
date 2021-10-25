@@ -45,6 +45,7 @@ python3 --version
 
 python3 ./exps/basic-main.py --dataset ${dataset} \
 	--data_path ${root} --model_source nas \
+	--name ${dataset} \
 	--model_config ./configs/archs/NAS-${base}-${model}.config \
 	--optim_config ./configs/opts/NAS-${base}.config \
 	--procedure    basic \

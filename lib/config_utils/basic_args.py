@@ -6,6 +6,7 @@ from .share_args import add_shared_args
 
 def obtain_basic_args():
   parser = argparse.ArgumentParser(description='Train a classification model on typical image classification datasets.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+  parser.add_argument('--name', type=str, default="mnist", help='dataset to use')
   parser.add_argument('--resume'      ,     type=str,                   help='Resume path.')
   parser.add_argument('--init_model'  ,     type=str,                   help='The initialization model path.')
   parser.add_argument('--model_config',     type=str,                   help='The path to the model configuration')
