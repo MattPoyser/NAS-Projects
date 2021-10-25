@@ -141,7 +141,7 @@ def get_datasets(name, root, config):
         xshape = (1, 3, 32, 32)
     elif name.startswith('imagenet-1k')or name == 'imagenet':
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        if name == 'imagenet-1k':
+        if name == 'imagenet-1k' or name == 'imagenet':
             xlists = [transforms.RandomResizedCrop(224)]
             xlists.append(
                 transforms.ColorJitter(
