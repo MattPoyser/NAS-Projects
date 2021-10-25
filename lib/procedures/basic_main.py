@@ -8,9 +8,9 @@ import numpy as np
 import torch.nn.functional as F
 
 
-def basic_train(xloader, network, criterion, scheduler, optimizer, optim_config, extra_info, print_freq, logger):
+def basic_train(xloader, network, criterion, scheduler, optimizer, optim_config, extra_info, print_freq, logger, full_config):
     loss, acc1, acc5, hardness, correct = procedure(xloader, network, criterion, scheduler, optimizer, 'train',
-                                                    optim_config, extra_info, print_freq, logger)
+                                                    optim_config, extra_info, print_freq, logger, full_config)
     return loss, acc1, acc5, hardness, correct
 
 
@@ -21,7 +21,7 @@ def basic_valid(xloader, network, criterion, optim_config, extra_info, print_fre
     return loss, acc1, acc5
 
 
-def procedure(xloader, network, criterion, scheduler, optimizer, mode, config, extra_info, print_freq, logger):
+def procedure(xloader, network, criterion, scheduler, optimizer, mode, config, extra_info, print_freq, logger, full_config):
     data_time, batch_time, losses, top1, top5 = AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()
     if mode == 'train':
         network.train()
@@ -37,7 +37,7 @@ def procedure(xloader, network, criterion, scheduler, optimizer, mode, config, e
 
     hardness = [None for i in range(len(xloader))]
     correct = [None for i in range(len(xloader))]
-    batch_size = config.batch_size
+    batch_size = full_config.batch_size
 
     for i, (inputs, targets) in enumerate(xloader):
         if mode == 'train': scheduler.update(None, 1.0 * i / len(xloader))

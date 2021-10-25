@@ -136,7 +136,7 @@ def main(args):
 
             # train for one epoch
             train_loss, train_acc1, train_acc5, hardness, correct  = train_func(train_loader, network, criterion, scheduler, optimizer,
-                                                            optim_config, epoch_str, args.print_freq, logger)
+                                                            optim_config, epoch_str, args.print_freq, logger, args)
             if args.dynamic:
                 train_loader.dataset.update_correct(correct)
             # log the results
