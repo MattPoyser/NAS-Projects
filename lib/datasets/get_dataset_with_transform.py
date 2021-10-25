@@ -124,6 +124,8 @@ def get_datasets(name, root, config):
         train_transform = transforms.Compose(lists)
         test_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])
         xshape = (1, 3, 32, 32)
+        if name == "mnist" or name == "fashion":
+            xshape = (1, 1, 32, 32)
     elif name.startswith('ImageNet16'):
         lists = [transforms.RandomHorizontalFlip(), transforms.RandomCrop(16, padding=2), transforms.ToTensor(),
                  transforms.Normalize(mean, std)]

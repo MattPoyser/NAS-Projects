@@ -7,14 +7,17 @@ from .base_cells      import InferCell
 
 class NetworkCIFAR(nn.Module):
 
-  def __init__(self, C, N, stem_multiplier, auxiliary, genotype, num_classes):
+  def __init__(self, C, N, stem_multiplier, auxiliary, genotype, num_classes, isGray=False):
     super(NetworkCIFAR, self).__init__()
     self._C               = C
     self._layerN          = N
     self._stem_multiplier = stem_multiplier
 
     C_curr = self._stem_multiplier * C
-    self.stem = CifarHEAD(C_curr)
+    if isGray:
+      self.stem = CifarHEAD(C_curr, grayscale=True)
+    else:
+      self.stem = CifarHEAD(C_curr)
   
     layer_channels   = [C    ] * N + [C*2 ] + [C*2  ] * N + [C*4 ] + [C*4  ] * N    
     layer_reductions = [False] * N + [True] + [False] * N + [True] + [False] * N

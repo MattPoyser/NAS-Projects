@@ -48,7 +48,6 @@ def main(args):
     if args.model_source == 'normal':
         base_model = obtain_model(model_config)
     elif args.model_source == 'nas':
-        raise AttributeError(model_config)
         base_model = obtain_nas_infer_model(model_config)
     else:
         raise ValueError('invalid model-source : {:}'.format(args.model_source))
