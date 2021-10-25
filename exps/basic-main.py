@@ -52,8 +52,8 @@ def main(args):
     else:
         raise ValueError('invalid model-source : {:}'.format(args.model_source))
 
-    if args.name == "mnist" or args.name == "fashion":
-        base_model.stem.conv.in_channels = 1
+    # if args.name == "mnist" or args.name == "fashion":
+    #     base_model.stem.conv.in_channels = 1
 
     flop, param = get_model_infos(base_model, xshape)
     logger.log('model ====>>>>:\n{:}'.format(base_model))
