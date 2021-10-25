@@ -178,6 +178,7 @@ def get_datasets(name, root, config):
         normalize,
     ])
     if name == 'cifar10':
+        dset_cls = dset.CIFAR10
         # train_data = dset.CIFAR10(root, train=True, transform=train_transform, download=True)
         # test_data = dset.CIFAR10(root, train=False, transform=test_transform, download=True)
         dynamic_name = "cifar10"
