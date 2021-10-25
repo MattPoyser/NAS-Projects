@@ -40,7 +40,7 @@ def procedure(xloader, network, criterion, scheduler, optimizer, mode, config, e
     batch_size = full_config.batch_size
 
     for i, (inputs, targets) in enumerate(xloader):
-        print(inputs.shape, )
+        print(inputs.shape)
         if mode == 'train': scheduler.update(None, 1.0 * i / len(xloader))
         # measure data loading time
         data_time.update(time.time() - end)
