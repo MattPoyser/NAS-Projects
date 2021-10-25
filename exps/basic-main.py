@@ -53,7 +53,7 @@ def main(args):
         raise ValueError('invalid model-source : {:}'.format(args.model_source))
 
     if args.name == "mnist" or args.name == "fashion":
-        raise AttributeError(base_model.stem.conv)
+        raise AttributeError(base_model.stem.conv.in_channels)
         # base_model.stem.conv = torch.conv2d(1, )
     flop, param = get_model_infos(base_model, xshape)
     logger.log('model ====>>>>:\n{:}'.format(base_model))
