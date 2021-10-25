@@ -172,14 +172,6 @@ def get_datasets(name, root, config):
     isize = 64
     nz = 8
     aisize = 256
-    normalize = transforms.Normalize(
-        mean=[0.13066051707548254],
-        std=[0.30810780244715075])
-    perc_transforms = transforms.Compose([
-        transforms.RandomResizedCrop(isize),
-        transforms.ToTensor(),
-        normalize,
-    ])
     if name == 'cifar10':
         dset_cls = dset.CIFAR10
         # train_data = dset.CIFAR10(root, train=True, transform=train_transform, download=True)
@@ -240,6 +232,14 @@ def get_datasets(name, root, config):
     else:
         raise TypeError("Unknown dataset : {:}".format(name))
 
+    normalize = transforms.Normalize(
+        mean=[0.13066051707548254],
+        std=[0.30810780244715075])
+    perc_transforms = transforms.Compose([
+        transforms.RandomResizedCrop(isize),
+        transforms.ToTensor(),
+        normalize,
+    ])
     if config.isbad:
         auto_resume = "badpath"
 
