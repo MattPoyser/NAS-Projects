@@ -48,7 +48,7 @@ def procedure(xloader, network, criterion, scheduler, optimizer, mode, config, e
 
         if mode == 'train': optimizer.zero_grad()
 
-        raise AttributeError(network.stem)
+        raise AttributeError(network)
         features, logits = network(inputs)
         if isinstance(logits, list):
             assert len(logits) == 2, 'logits must has {:} items instead of {:}'.format(2, len(logits))
