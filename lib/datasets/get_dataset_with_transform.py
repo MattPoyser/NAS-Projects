@@ -139,7 +139,7 @@ def get_datasets(name, root, config):
         test_transform = transforms.Compose(
             [transforms.CenterCrop(80), transforms.ToTensor(), transforms.Normalize(mean, std)])
         xshape = (1, 3, 32, 32)
-    elif name.startswith('imagenet-1k'):
+    elif name.startswith('imagenet-1k')or name == 'imagenet':
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         if name == 'imagenet-1k':
             xlists = [transforms.RandomResizedCrop(224)]
@@ -162,7 +162,7 @@ def get_datasets(name, root, config):
             [transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), normalize])
         xshape = (1, 3, 224, 224)
     else:
-        raise TypeError("Unknow dataset : {:}".format(name))
+        raise TypeError("Unknown dataset : {:}".format(name))
 
     pretrain_resume = "/home2/lgfm95/hem/perceptual/good.pth.tar"
     grayscale = False
@@ -193,7 +193,7 @@ def get_datasets(name, root, config):
         train_data = dset.CIFAR100(root, train=True, transform=train_transform, download=True)
         test_data = dset.CIFAR100(root, train=False, transform=test_transform, download=True)
         assert len(train_data) == 50000 and len(test_data) == 10000
-    elif name.startswith('imagenet-1k'):
+    elif name.startswith('imagenet-1k') or name == 'imagenet':
         # train_data = dset.ImageFolder(osp.join(root, 'train'), train_transform)
         # test_data = dset.ImageFolder(osp.join(root, 'val'), test_transform)
         dynamic_name = "imagenet"
