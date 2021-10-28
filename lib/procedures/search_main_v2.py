@@ -73,8 +73,8 @@ def search_train_v2(train_loader, valid_loader, network, criterion, scheduler, b
         # measure elapsed time
         batch_time.update(time.time() - end)
         end = time.time()
-        if step % print_freq == 0 or (step + 1) == len(search_loader):
-            Sstr = '**TRAIN** ' + time_string() + ' [{:}][{:03d}/{:03d}]'.format(epoch_str, step, len(search_loader))
+        if step % print_freq == 0 or (step + 1) == len(train_loader):
+            Sstr = '**TRAIN** ' + time_string() + ' [{:}][{:03d}/{:03d}]'.format(epoch_str, step, len(train_loader))
             Tstr = 'Time {batch_time.val:.2f} ({batch_time.avg:.2f}) Data {data_time.val:.2f} ({data_time.avg:.2f})'.format(
                 batch_time=batch_time, data_time=data_time)
             Lstr = 'Base-Loss {loss.val:.3f} ({loss.avg:.3f})  Prec@1 {top1.val:.2f} ({top1.avg:.2f}) Prec@5 {top5.val:.2f} ({top5.avg:.2f})'.format(
