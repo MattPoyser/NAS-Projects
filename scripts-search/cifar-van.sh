@@ -26,7 +26,7 @@ rseed=-1
 subset_size=$1
 hardness=$2
 mastery=$3
-data_path="/hdd/PhD/data/cifar10/"
+data_path="/home2/lgfm95/cifar10/"
 
 save_dir=./output/search-shape/${dataset}-${model}-${optim}-Gumbel_${gumbel_min}_${gumbel_max}-${expected_FLOP_ratio}
 
