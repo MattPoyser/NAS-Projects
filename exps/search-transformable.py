@@ -31,24 +31,24 @@ def main(args):
   logger = prepare_logger(args)
   
   # prepare dataset
-  train_data, valid_data, xshape, class_num = get_datasets(args.dataset, args.data_path, args.cutout_length)
-  #train_loader = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size, shuffle=True , num_workers=args.workers, pin_memory=True)
+  train_data, valid_data, xshape, class_num = get_datasets(args.dataset, args.data_path, args)
+  train_loader = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size, shuffle=True , num_workers=args.workers, pin_memory=True)
   valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=args.batch_size, shuffle=False, num_workers=args.workers, pin_memory=True)
 
-  split_file_path = Path(args.split_path)
-  assert split_file_path.exists(), '{:} does not exist'.format(split_file_path)
-  split_info      = torch.load(split_file_path)
-
-  train_split, valid_split = split_info['train'], split_info['valid']
-  assert len( set(train_split).intersection( set(valid_split) ) ) == 0, 'There should be 0 element that belongs to both train and valid'
-  assert len(train_split) + len(valid_split) == len(train_data), '{:} + {:} vs {:}'.format(len(train_split), len(valid_split), len(train_data))
-  search_dataset  = SearchDataset(args.dataset, train_data, train_split, valid_split)
+  # split_file_path = Path(args.split_path)
+  # assert split_file_path.exists(), '{:} does not exist'.format(split_file_path)
+  # split_info      = torch.load(split_file_path)
+  #
+  # train_split, valid_split = split_info['train'], split_info['valid']
+  # assert len( set(train_split).intersection( set(valid_split) ) ) == 0, 'There should be 0 element that belongs to both train and valid'
+  # assert len(train_split) + len(valid_split) == len(train_data), '{:} + {:} vs {:}'.format(len(train_split), len(valid_split), len(train_data))
+  # search_dataset  = SearchDataset(args.dataset, train_data, train_split, valid_split)
   
-  search_train_loader = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
-                      sampler=torch.utils.data.sampler.SubsetRandomSampler(train_split), pin_memory=True, num_workers=args.workers)
-  search_valid_loader = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
-                      sampler=torch.utils.data.sampler.SubsetRandomSampler(valid_split), pin_memory=True, num_workers=args.workers)
-  search_loader       = torch.utils.data.DataLoader(search_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers, pin_memory=True, sampler=None)
+  # search_train_loader = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
+  #                     sampler=torch.utils.data.sampler.SubsetRandomSampler(train_split), pin_memory=True, num_workers=args.workers)
+  # search_valid_loader = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size,
+  #                     sampler=torch.utils.data.sampler.SubsetRandomSampler(valid_split), pin_memory=True, num_workers=args.workers)
+  # search_loader       = torch.utils.data.DataLoader(search_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers, pin_memory=True, sampler=None)
   # get configures
   if args.ablation_num_select is None or args.ablation_num_select <= 0:
     model_config = load_config(args.model_config, {'class_num': class_num, 'search_mode': 'shape'}, logger)
@@ -63,9 +63,9 @@ def main(args):
   logger.log('MAX_FLOP = {:} M'.format(MAX_FLOP))
   logger.log('Params   = {:} M'.format(param))
   logger.log('train_data : {:}'.format(train_data))
-  logger.log('search-data: {:}'.format(search_dataset))
-  logger.log('search_train_loader : {:} samples'.format( len(train_split) ))
-  logger.log('search_valid_loader : {:} samples'.format( len(valid_split) ))
+  # logger.log('search-data: {:}'.format(search_dataset))
+  # logger.log('search_train_loader : {:} samples'.format( len(train_split) ))
+  # logger.log('search_valid_loader : {:} samples'.format( len(valid_split) ))
   base_optimizer, scheduler, criterion = get_optim_scheduler(search_model.base_parameters(), optim_config)
   arch_optimizer = torch.optim.Adam(search_model.arch_parameters(optim_config.arch_LR), lr=optim_config.arch_LR, betas=(0.5, 0.999), weight_decay=optim_config.arch_decay)
   logger.log('base-optimizer : {:}'.format(base_optimizer))
@@ -123,7 +123,7 @@ def main(args):
     logger.log('\n***{:s}*** start {:s} {:s}, LR=[{:.6f} ~ {:.6f}], scheduler={:}, tau={:}, FLOP={:.2f}'.format(time_string(), epoch_str, need_time, min(LRs), max(LRs), scheduler, search_model.tau, MAX_FLOP))
 
     # train for one epoch
-    train_base_loss, train_arch_loss, train_acc1, train_acc5 = train_func(search_loader, network, criterion, scheduler, base_optimizer, arch_optimizer, optim_config, \
+    train_base_loss, train_arch_loss, train_acc1, train_acc5 = train_func(train_loader, valid_loader, network, criterion, scheduler, base_optimizer, arch_optimizer, optim_config, \
                                                                                 {'epoch-str'  : epoch_str,        'FLOP-exp': MAX_FLOP * args.FLOP_ratio,
                                                                                  'FLOP-weight': args.FLOP_weight, 'FLOP-tolerant': MAX_FLOP * args.FLOP_tolerant}, args.print_freq, logger)
     # log the results
@@ -147,7 +147,7 @@ def main(args):
     # evaluate the performance
     if (epoch % args.eval_frequency == 0) or (epoch + 1 == total_epoch):
       logger.log('-'*150)
-      valid_loss, valid_acc1, valid_acc5 = valid_func(search_valid_loader, network, criterion, epoch_str, args.print_freq_eval, logger)
+      valid_loss, valid_acc1, valid_acc5 = valid_func(train_loader, valid_loader, network, criterion, epoch_str, args.print_freq_eval, logger)
       valid_accuracies[epoch] = valid_acc1
       logger.log('***{:s}*** VALID [{:}] loss = {:.6f}, accuracy@1 = {:.2f}, accuracy@5 = {:.2f} | Best-Valid-Acc@1={:.2f}, Error@1={:.2f}'.format(time_string(), epoch_str, valid_loss, valid_acc1, valid_acc5, valid_accuracies['best'], 100-valid_accuracies['best']))
       if valid_acc1 > valid_accuracies['best']:
