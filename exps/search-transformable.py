@@ -147,7 +147,7 @@ def main(args):
     # evaluate the performance
     if (epoch % args.eval_frequency == 0) or (epoch + 1 == total_epoch):
       logger.log('-'*150)
-      valid_loss, valid_acc1, valid_acc5 = valid_func(train_loader, valid_loader, network, criterion, epoch_str, args.print_freq_eval, logger)
+      valid_loss, valid_acc1, valid_acc5 = valid_func(valid_loader, network, criterion, epoch_str, args.print_freq_eval, logger)
       valid_accuracies[epoch] = valid_acc1
       logger.log('***{:s}*** VALID [{:}] loss = {:.6f}, accuracy@1 = {:.2f}, accuracy@5 = {:.2f} | Best-Valid-Acc@1={:.2f}, Error@1={:.2f}'.format(time_string(), epoch_str, valid_loss, valid_acc1, valid_acc5, valid_accuracies['best'], 100-valid_accuracies['best']))
       if valid_acc1 > valid_accuracies['best']:
