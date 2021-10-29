@@ -23,7 +23,10 @@ gumbel_min=0.1
 gumbel_max=5
 expected_FLOP_ratio=0.47
 rseed=-1
-data_path="/hdd/PhD/data/cifar10/"
+subset_size=$1
+hardness=$2
+mastery=$3
+data_path="/home2/lgfm95/cifar10/"
 
 save_dir=./output/search-shape/${dataset}-${model}-${optim}-Gumbel_${gumbel_min}_${gumbel_max}-${expected_FLOP_ratio}
 
@@ -39,7 +42,13 @@ OMP_NUM_THREADS=4 python3 ./exps/search-transformable.py --dataset ${dataset} \
 	--gumbel_tau_max ${gumbel_max} --gumbel_tau_min ${gumbel_min} \
 	--cutout_length -1 \
 	--batch_size  ${batch} --rand_seed ${rseed} --workers 6 \
-	--eval_frequency 1 --print_freq 100 --print_freq_eval 200
+	--eval_frequency 1 --print_freq 100 --print_freq_eval 200 \
+	--init_train_epochs 5 \
+	--ncc 1 \
+	--dynamic 1 \
+	--subset_size ${subset_size} \
+	--hardness ${hardness} \
+	--mastery ${mastery}
 
 
 if [ "$rseed" = "-1" ]; then
