@@ -5,6 +5,8 @@ import os, sys, time, torch
 from log_utils import AverageMeter, time_string
 from utils import obtain_accuracy
 from models import change_key
+import numpy as np
+import torch.nn.functional as F
 
 
 def get_flop_loss(expected_flop, flop_cur, flop_need, flop_tolerant):
@@ -24,7 +26,7 @@ def get_flop_loss(expected_flop, flop_cur, flop_need, flop_tolerant):
 
 
 def search_train_v2(train_loader, valid_loader, network, criterion, scheduler, base_optimizer, arch_optimizer, optim_config,
-                    extra_info, print_freq, logger):
+                    extra_info, print_freq, logger, args):
     data_time, batch_time = AverageMeter(), AverageMeter()
     base_losses, arch_losses, top1, top5 = AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()
     arch_cls_losses, arch_flop_losses = AverageMeter(), AverageMeter()
@@ -35,6 +37,10 @@ def search_train_v2(train_loader, valid_loader, network, criterion, scheduler, b
     logger.log('[Search] : {:}, FLOP-Require={:.2f} MB, FLOP-WEIGHT={:.2f}'.format(epoch_str, flop_need, flop_weight))
     end = time.time()
     network.apply(change_key('search_mode', 'search'))
+
+    hardness = [None for i in range(len(train_loader))]
+    correct = [None for i in range(len(train_loader))]
+    batch_size = args.batch_size
     for step, ((base_inputs, base_targets), (arch_inputs, arch_targets)) in enumerate(zip(train_loader, valid_loader)):
         scheduler.update(None, 1.0 * step / len(train_loader))
         # calculate prediction and loss
@@ -47,6 +53,11 @@ def search_train_v2(train_loader, valid_loader, network, criterion, scheduler, b
         base_optimizer.zero_grad()
         logits, expected_flop = network(base_inputs)
         base_loss = criterion(logits, base_targets)
+
+        new_hardness, new_correct = get_hardness(logits.cpu(), base_targets.cpu(), False)
+        hardness[(step * batch_size):(step * batch_size) + batch_size] = new_hardness  # assumes batch 1 takes idx 0-8, batch 2 takes 9-16, etc.
+        correct[(step * batch_size):(step * batch_size) + batch_size] = new_correct
+
         base_loss.backward()
         base_optimizer.step()
         # record
@@ -94,4 +105,50 @@ def search_train_v2(train_loader, valid_loader, network, criterion, scheduler, b
         ' **TRAIN** Prec@1 {top1.avg:.2f} Prec@5 {top5.avg:.2f} Error@1 {error1:.2f} Error@5 {error5:.2f} Base-Loss:{baseloss:.3f}, Arch-Loss={archloss:.3f}'.format(
             top1=top1, top5=top5, error1=100 - top1.avg, error5=100 - top5.avg, baseloss=base_losses.avg,
             archloss=arch_losses.avg))
-    return base_losses.avg, arch_losses.avg, top1.avg, top5.avg
+    return base_losses.avg, arch_losses.avg, top1.avg, top5.avg, hardness, correct
+
+
+# low value for hardness means harder.
+def get_hardness(output, target, is_multi):
+    if not is_multi:
+        # currently a binary association between correct classication => 0.8
+        # we want it to be a softmax representation. if we instead take crossentropy loss of each individual cf target
+        _, predicted = torch.max(output.data, 1)
+        confidence = F.softmax(output, dim=1)
+        try:
+            hardness_scaler = np.where((predicted == target), 1, 0.1) # if correct, simply use confidence as measure of hardness
+        except RuntimeError:
+            raise AttributeError(output.shape, target.shape, predicted.shape, confidence.shape)
+        # therefore if model can easily say yep this is object X, then confidence will be high. if it only just manages to identify
+        # object X, confidence if lower
+        # if object X is misclassified, hardness needs to be lower still.
+        # assumes that it does not confidently misclassify.
+        # raise AttributeError(output.shape, target.shape, predicted.shape, confidence.shape, hardness_scaler)
+        hardness = [(confidence[i][predicted[i]] * hardness_scaler[i]).item() for i in range(output.size(0))]
+    else:
+        output = torch.sigmoid(output.float()).detach()
+        output[output>0.5] = 1
+        output[output<=0.5] = 0
+        confidence = F.softmax(output, dim=1)
+
+        hardness_scaler = []
+        hardness = []
+        assert len(output) == len(target) # should both be equal to batch size
+        for q in range(len(output)):
+            assert len(output[q]) == len(target[q]) # should both be equal to num_classes eg 184
+            correct_avg = (np.array(output[q]) == np.array(target[q])).sum() / len(output[q])
+            if correct_avg > 0.5: # this could be another threshold we change, or have it == hardness threshold
+                hardness_scaler.append(1)
+            else:
+                hardness_scaler.append(0.1)
+
+            correct = np.where(np.array(output[q]) == np.array(target[q]))[0]
+            hardness_value = [confidence[q][i] * 1 if i in correct else confidence[q][i] * 0.1 for i in range(len(output[q]))]
+            hardness.append(sum(hardness_value) / len(output[q]))
+
+
+        hardness_scaler = np.asarray(hardness_scaler)
+        hardness = np.array(hardness)
+        # raise AttributeError(output, target, hardness_scaler, hardness)
+
+    return hardness, hardness_scaler
