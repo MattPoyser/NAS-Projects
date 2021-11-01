@@ -45,6 +45,7 @@ OMP_NUM_THREADS=4 python3 ./exps/search-transformable.py --dataset ${dataset} \
 	--batch_size  ${batch} --rand_seed ${rseed} --workers 6 \
 	--eval_frequency 1 --print_freq 100 --print_freq_eval 200 \
 	--init_train_epochs 5 \
+	--ncc 1 \
 	--subset_size ${subset_size} \
 	--hardness ${hardness} \
 	--mastery ${mastery}
