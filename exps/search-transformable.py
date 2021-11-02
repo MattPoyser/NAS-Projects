@@ -55,8 +55,11 @@ def main(args):
     #                     sampler=torch.utils.data.sampler.SubsetRandomSampler(valid_split), pin_memory=True, num_workers=args.workers)
     # search_loader       = torch.utils.data.DataLoader(search_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers, pin_memory=True, sampler=None)
     # get configures
+    grayscale = False
+    if args.dataset == "mnist" or args.dataset == "fashion":
+        grayscale = True
     if args.ablation_num_select is None or args.ablation_num_select <= 0:
-        model_config = load_config(args.model_config, {'class_num': class_num, 'search_mode': 'shape'}, logger)
+        model_config = load_config(args.model_config, {'class_num': class_num, 'search_mode': 'shape', 'grayscale': grayscale}, logger)
     else:
         model_config = load_config(args.model_config, {'class_num': class_num, 'search_mode': 'ablation',
                                                        'num_random_select': args.ablation_num_select}, logger)

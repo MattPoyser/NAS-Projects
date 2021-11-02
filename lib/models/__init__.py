@@ -80,7 +80,7 @@ def obtain_search_model(config):
       elif config.search_mode == 'depth':
         return SearchDepthCifarResNet(config.module, config.depth, config.class_num)
       elif config.search_mode == 'shape':
-        return SearchShapeCifarResNet(config.module, config.depth, config.class_num)
+        return SearchShapeCifarResNet(config.module, config.depth, config.class_num, config.grayscale)
       else: raise ValueError('invalid search mode : {:}'.format(config.search_mode))
     else:
       raise ValueError('invalid arch : {:} for dataset [{:}]'.format(config.arch, config.dataset))
