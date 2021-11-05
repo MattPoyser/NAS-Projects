@@ -540,7 +540,11 @@ class SearchShapeCifarResNet(nn.Module):
                 x_expected_flop = expected_flop
             flops.append(x_expected_flop)
         flops.append(expected_inC * (self.classifier.out_features * 1.0 / 1e6))
-        features = self.avgpool(x)
+        to_save = x.shape
+        try:
+            features = self.avgpool(x)
+        except RuntimeError:
+            raise AttributeError(to_save, features.shape)
         features = features.view(features.size(0), -1)
         logits = linear_forward(features, self.classifier)
         return logits, torch.stack([sum(flops)])
