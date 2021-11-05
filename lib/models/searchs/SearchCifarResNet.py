@@ -515,6 +515,7 @@ class SearchShapeCifarResNet(nn.Module):
             selected_w_probs = selected_width_probs[last_channel_idx: last_channel_idx + layer.num_conv]
             layer_prob = flop_width_probs[last_channel_idx: last_channel_idx + layer.num_conv]
             x, expected_inC, expected_flop = layer((x, expected_inC, layer_prob, selected_w_index, selected_w_probs))
+            print(x.shape)
             feature_maps.append(x)
             last_channel_idx += layer.num_conv
             if i in self.depth_info:  # aggregate the information
@@ -539,6 +540,7 @@ class SearchShapeCifarResNet(nn.Module):
             else:
                 x_expected_flop = expected_flop
             flops.append(x_expected_flop)
+            print(x.shape)
         flops.append(expected_inC * (self.classifier.out_features * 1.0 / 1e6))
         to_save = x.shape
         try:
