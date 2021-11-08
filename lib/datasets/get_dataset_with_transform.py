@@ -123,6 +123,8 @@ def get_datasets(name, root, config):
         if cutout > 0: lists += [CUTOUT(cutout)]
         train_transform = transforms.Compose(lists)
         test_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])
+        if name == "mnist" or name == "fashion":
+            test_transform = transforms.Compose([transforms.RandomCrop(32, padding=4), transforms.ToTensor(), transforms.Normalize(mean, std)])
         xshape = (1, 3, 32, 32)
     elif name.startswith('ImageNet16'):
         lists = [transforms.RandomHorizontalFlip(), transforms.RandomCrop(16, padding=2), transforms.ToTensor(),
