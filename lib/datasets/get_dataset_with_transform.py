@@ -124,8 +124,6 @@ def get_datasets(name, root, config):
         train_transform = transforms.Compose(lists)
         test_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])
         xshape = (1, 3, 32, 32)
-        if name == "mnist" or name == "fashion":
-            xshape = (1, 1, 32, 32)
     elif name.startswith('ImageNet16'):
         lists = [transforms.RandomHorizontalFlip(), transforms.RandomCrop(16, padding=2), transforms.ToTensor(),
                  transforms.Normalize(mean, std)]
@@ -267,7 +265,8 @@ def get_datasets(name, root, config):
             is_detection=is_detection,
             convert_to_paths=convert_to_paths,
             convert_to_lbl_paths=convert_to_lbl_paths,
-            bede=False)
+            bede=False,
+            tas=True)
         # is_csv=False)
         if name == "imagenet":
             test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name,
@@ -291,8 +290,8 @@ def get_datasets(name, root, config):
                 test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name, subset_size=config.subset_size)
             else:
                 subset_size = config.subset_size
-                train_data = SubDataset(transforms=train_transform, val_transforms=test_transform, val=False, dataset_name=dynamic_name, subset_size=subset_size)
-                test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name, subset_size=subset_size)
+                train_data = SubDataset(transforms=train_transform, val_transforms=test_transform, val=False, dataset_name=dynamic_name, subset_size=subset_size, tas=True)
+                test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name, subset_size=subset_size, tas=True)
 
     class_num = Dataset2Class[name]
     return train_data, test_data, xshape, class_num
