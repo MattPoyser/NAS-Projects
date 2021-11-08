@@ -68,7 +68,6 @@ def search_train_v2(train_loader, valid_loader, network, criterion, scheduler, b
 
         # update the architecture
         arch_optimizer.zero_grad()
-        print(base_inputs.shape, arch_inputs.shape, "grep here")
         logits, expected_flop = network(arch_inputs)
         flop_cur = network.module.get_flop('genotype', None, None)
         flop_loss, flop_loss_scale = get_flop_loss(expected_flop, flop_cur, flop_need, flop_tolerant)

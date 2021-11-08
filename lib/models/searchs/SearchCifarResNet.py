@@ -388,7 +388,8 @@ class SearchShapeCifarResNet(nn.Module):
         if config_dict is not None: config_dict = config_dict.copy()
         # select channels
         channels = [3]
-        raise AttributeError("asdf", channels)
+        if self.grayscale:
+            channels = [1]
         for i, weight in enumerate(self.width_attentions):
             if mode == 'genotype':
                 with torch.no_grad():
