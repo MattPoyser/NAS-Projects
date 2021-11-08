@@ -95,7 +95,6 @@ class ConvBNReLU(nn.Module):
         assert isinstance(tuple_inputs, tuple) and len(tuple_inputs) == 5, 'invalid type input : {:}'.format(
             type(tuple_inputs))
         inputs, expected_inC, probability, index, prob = tuple_inputs
-        # print(inputs.shape, "inputs shape convbnrelu")
         index, prob = torch.squeeze(index).tolist(), torch.squeeze(prob)
         probability = torch.squeeze(probability)
         assert len(index) == 2, 'invalid length : {:}'.format(index)
@@ -107,29 +106,21 @@ class ConvBNReLU(nn.Module):
             out = self.avg(inputs)
         else:
             out = inputs
-        # print(out.shape, self.avg, "out shape convbnrelu")
 
         # convolutional layer
         out_convs = conv_forward(out, self.conv, [self.choices[i] for i in index])
-        # print(len(out_convs), "out convs shape convbnrelu")
         out_bns = [self.BNs[idx](out_conv) for idx, out_conv in zip(index, out_convs)]
         # merge
-        # print(len(out_bns), "out bns shape convbnrelu")
         out_channel = max([x.size(1) for x in out_bns])
         outA = ChannelWiseInter(out_bns[0], out_channel)
         outB = ChannelWiseInter(out_bns[1], out_channel)
-        # print(outA.shape, outB.shape, "out a/b shape convbnrelu")
         out = outA * prob[0] + outB * prob[1]
-        # print(out.shape, "out shape convbnrelu")
         # out = additive_func(out_bns[0]*prob[0], out_bns[1]*prob[1])
 
         if self.relu:
             out = self.relu(out)
         else:
             out = out
-        # if 28 in out.shape[2:]:
-        print(out.shape, "out final convs shape convbnrelu")
-        #     raise AttributeError("grep here convbn")
         return out, expected_outC, expected_flop
 
     def basic_forward(self, inputs):
@@ -198,23 +189,16 @@ class ResNetBasicblock(nn.Module):
         assert isinstance(tuple_inputs, tuple) and len(tuple_inputs) == 5, 'invalid type input : {:}'.format(
             type(tuple_inputs))
         inputs, expected_inC, probability, indexes, probs = tuple_inputs
-        # print(inputs.shape, "inputs shape")
         assert indexes.size(0) == 2 and probs.size(0) == 2 and probability.size(0) == 2
         out_a, expected_inC_a, expected_flop_a = self.conv_a(
             (inputs, expected_inC, probability[0], indexes[0], probs[0]))
-        # print(out_a.shape, "out a shape")
         out_b, expected_inC_b, expected_flop_b = self.conv_b(
             (out_a, expected_inC_a, probability[1], indexes[1], probs[1]))
         if self.downsample is not None:
             residual, _, expected_flop_c = self.downsample((inputs, expected_inC, probability[1], indexes[1], probs[1]))
         else:
             residual, expected_flop_c = inputs, 0
-        # print(out_b.shape, "out b shape")
         out = additive_func(residual, out_b)
-        # print(out.shape, "additive func shape")
-        # if 28 in out.shape[2:]:
-        #     print("out shape actual", out.shape)
-        #     raise AttributeError("grep here")
         return out, expected_inC_b, sum([expected_flop_a, expected_flop_b, expected_flop_c])
 
     def basic_forward(self, inputs):
@@ -388,14 +372,6 @@ class SearchShapeCifarResNet(nn.Module):
         nn.init.normal_(self.depth_attentions, 0, 0.01)
         self.apply(initialize_resnet)
 
-        def counting_forward_hook(module, inp, out):
-            global count
-            # print("convbnrelu count is", count)
-            count += 1
-        for name, module in self.named_modules():
-            if 'ConvBNReLU' in str(type(module)):
-                module.register_forward_hook(counting_forward_hook)
-
     def arch_parameters(self, LR=None):
         if LR is None:
             return [self.width_attentions, self.depth_attentions]
@@ -547,10 +523,6 @@ class SearchShapeCifarResNet(nn.Module):
             selected_w_probs = selected_width_probs[last_channel_idx: last_channel_idx + layer.num_conv]
             layer_prob = flop_width_probs[last_channel_idx: last_channel_idx + layer.num_conv]
             x, expected_inC, expected_flop = layer((x, expected_inC, layer_prob, selected_w_index, selected_w_probs))
-            # if x.shape != old_x:
-            #     print(x.shape)
-            #     if 28 in x.shape[2:]:
-            #         raise AttributeError(layer)
             old_x = x.shape
             feature_maps.append(x)
             last_channel_idx += layer.num_conv
@@ -576,10 +548,6 @@ class SearchShapeCifarResNet(nn.Module):
             else:
                 x_expected_flop = expected_flop
             flops.append(x_expected_flop)
-            # if x.shape != old_x:
-            #     print(x.shape)
-            #     if 28 in x.shape:
-            #         raise AttributeError("asdf")
 
             old_x = x.shape
         flops.append(expected_inC * (self.classifier.out_features * 1.0 / 1e6))
