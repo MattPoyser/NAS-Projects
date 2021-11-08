@@ -326,6 +326,8 @@ class SearchShapeCifarResNet(nn.Module):
         self.num_classes = num_classes
         self.channels = [16]
         input_channels = 3
+        if grayscale:
+            input_channels = 1
         self.layers = nn.ModuleList([ConvBNReLU(input_channels, 16, 3, 1, 1, False, has_avg=False, has_bn=True, has_relu=True)])
         self.InShape = None
         self.depth_info = OrderedDict()

@@ -123,9 +123,10 @@ def get_datasets(name, root, config):
         if cutout > 0: lists += [CUTOUT(cutout)]
         train_transform = transforms.Compose(lists)
         test_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])
+        xshape = (1, 3, 32, 32)
         if name == "mnist" or name == "fashion":
             test_transform = transforms.Compose([transforms.RandomCrop(32, padding=4), transforms.ToTensor(), transforms.Normalize(mean, std)])
-        xshape = (1, 3, 32, 32)
+            xshape = (1, 1, 32, 32)
     elif name.startswith('ImageNet16'):
         lists = [transforms.RandomHorizontalFlip(), transforms.RandomCrop(16, padding=2), transforms.ToTensor(),
                  transforms.Normalize(mean, std)]
@@ -267,8 +268,7 @@ def get_datasets(name, root, config):
             is_detection=is_detection,
             convert_to_paths=convert_to_paths,
             convert_to_lbl_paths=convert_to_lbl_paths,
-            bede=False,
-            tas=True)
+            bede=False)
         # is_csv=False)
         if name == "imagenet":
             test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name,
@@ -292,8 +292,8 @@ def get_datasets(name, root, config):
                 test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name, subset_size=config.subset_size)
             else:
                 subset_size = config.subset_size
-                train_data = SubDataset(transforms=train_transform, val_transforms=test_transform, val=False, dataset_name=dynamic_name, subset_size=subset_size, tas=True)
-                test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name, subset_size=subset_size, tas=True)
+                train_data = SubDataset(transforms=train_transform, val_transforms=test_transform, val=False, dataset_name=dynamic_name, subset_size=subset_size)
+                test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name, subset_size=subset_size)
 
     class_num = Dataset2Class[name]
     return train_data, test_data, xshape, class_num
