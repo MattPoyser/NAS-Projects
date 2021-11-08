@@ -325,6 +325,7 @@ class SearchShapeCifarResNet(nn.Module):
         self.message = 'SearchShapeCifarResNet : Depth : {:} , Layers for each block : {:}'.format(depth, layer_blocks)
         self.num_classes = num_classes
         self.channels = [16]
+        self.grayscale = grayscale
         input_channels = 3
         if grayscale:
             input_channels = 1
@@ -537,6 +538,8 @@ class SearchShapeCifarResNet(nn.Module):
             selected_widths = selected_widths.cpu()
 
         x, last_channel_idx, expected_inC, flops = inputs, 0, 3, []
+        if self.grayscale:
+            expected_inC = 1
         feature_maps = []
         old_x = x.shape
         for i, layer in enumerate(self.layers):
