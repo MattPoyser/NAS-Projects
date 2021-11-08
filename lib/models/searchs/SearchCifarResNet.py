@@ -515,6 +515,7 @@ class SearchShapeCifarResNet(nn.Module):
         return self.message
 
     def forward(self, inputs):
+        raise AttributeError(inputs.shape)
         if self.search_mode == 'basic':
             return self.basic_forward(inputs)
         elif self.search_mode == 'search':
