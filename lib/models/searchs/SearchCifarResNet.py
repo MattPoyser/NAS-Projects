@@ -496,15 +496,12 @@ class SearchShapeCifarResNet(nn.Module):
         return self.message
 
     def forward(self, inputs):
-        try:
-            if self.search_mode == 'basic':
-                return self.basic_forward(inputs)
-            elif self.search_mode == 'search':
-                return self.search_forward(inputs)
-            else:
-                raise ValueError('invalid search_mode = {:}'.format(self.search_mode))
-        except RuntimeError:
-            raise AttributeError(inputs.shape)
+        if self.search_mode == 'basic':
+            return self.basic_forward(inputs)
+        elif self.search_mode == 'search':
+            return self.search_forward(inputs)
+        else:
+            raise ValueError('invalid search_mode = {:}'.format(self.search_mode))
 
     def search_forward(self, inputs):
         flop_width_probs = nn.functional.softmax(self.width_attentions, dim=1)
