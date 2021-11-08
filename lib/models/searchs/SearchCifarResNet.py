@@ -515,13 +515,15 @@ class SearchShapeCifarResNet(nn.Module):
         return self.message
 
     def forward(self, inputs):
-        raise AttributeError(inputs.shape)
-        if self.search_mode == 'basic':
-            return self.basic_forward(inputs)
-        elif self.search_mode == 'search':
-            return self.search_forward(inputs)
-        else:
-            raise ValueError('invalid search_mode = {:}'.format(self.search_mode))
+        try:
+            if self.search_mode == 'basic':
+                return self.basic_forward(inputs)
+            elif self.search_mode == 'search':
+                return self.search_forward(inputs)
+            else:
+                raise ValueError('invalid search_mode = {:}'.format(self.search_mode))
+        except RuntimeError:
+            raise AttributeError(inputs.shape)
 
     def search_forward(self, inputs):
         flop_width_probs = nn.functional.softmax(self.width_attentions, dim=1)
@@ -577,11 +579,7 @@ class SearchShapeCifarResNet(nn.Module):
             old_x = x.shape
         flops.append(expected_inC * (self.classifier.out_features * 1.0 / 1e6))
         to_save = x.shape
-        try:
-            features = self.avgpool(x)
-        except RuntimeError as e:
-            raise AttributeError(to_save, e, self.avgpool)
-        # raise AttributeError(to_save, self.avgpool, features.shape)
+        features = self.avgpool(x)
         features = features.view(features.size(0), -1)
         logits = linear_forward(features, self.classifier)
         return logits, torch.stack([sum(flops)])
