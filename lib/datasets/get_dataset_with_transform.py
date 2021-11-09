@@ -374,7 +374,7 @@ def get_datasets_augment(name, root, cutout):
     if name == "mnist":
         train_data = dset.MNIST(root, train=True, transform=train_transform, download=False)
         test_data = dset.MNIST(root, train=False, transform=test_transform, download=False)
-        assert len(train_data) == 50000 and len(test_data) == 10000, f"{len(train_data)} / {len(test_data)}"
+        assert len(train_data) == 60000 and len(test_data) == 10000
     if name == "fashion":
         train_data = dset.FashionMNIST(root, train=True, transform=train_transform, download=False)
         test_data = dset.FashionMNIST(root, train=False, transform=test_transform, download=False)
@@ -382,7 +382,7 @@ def get_datasets_augment(name, root, cutout):
     if name == 'cifar10':
         train_data = dset.CIFAR10(root, train=True, transform=train_transform, download=False)
         test_data = dset.CIFAR10(root, train=False, transform=test_transform, download=False)
-        assert len(train_data) == 60000 and len(test_data) == 10000
+        assert len(train_data) == 50000 and len(test_data) == 10000
     elif name == 'cifar100':
         train_data = dset.CIFAR100(root, train=True, transform=train_transform, download=True)
         test_data = dset.CIFAR100(root, train=False, transform=test_transform, download=True)
