@@ -315,13 +315,16 @@ def get_datasets_augment(name, root, cutout):
         raise TypeError("Unknow dataset : {:}".format(name))
 
     # Data Argumentation
-    if name == 'cifar10' or name == 'cifar100':
+    if name == 'cifar10' or name == 'cifar100' or name == "mnist" or name == "fashion":
         lists = [transforms.RandomHorizontalFlip(), transforms.RandomCrop(32, padding=4), transforms.ToTensor(),
                  transforms.Normalize(mean, std)]
         if cutout > 0: lists += [CUTOUT(cutout)]
         train_transform = transforms.Compose(lists)
         test_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])
         xshape = (1, 3, 32, 32)
+        if name == "mnist" or name == "fashion":
+            test_transform = transforms.Compose([transforms.RandomCrop(32, padding=4), transforms.ToTensor(), transforms.Normalize(mean, std)])
+            xshape = (1, 1, 32, 32)
     elif name.startswith('ImageNet16'):
         lists = [transforms.RandomHorizontalFlip(), transforms.RandomCrop(16, padding=2), transforms.ToTensor(),
                  transforms.Normalize(mean, std)]
@@ -362,9 +365,17 @@ def get_datasets_augment(name, root, cutout):
     else:
         raise TypeError("Unknow dataset : {:}".format(name))
 
+    if name == "mnist":
+        train_data = dset.MNIST(root, train=True, transform=train_transform, download=False)
+        test_data = dset.MNIST(root, train=False, transform=test_transform, download=False)
+        assert len(train_data) == 50000 and len(test_data) == 10000
+    if name == "fashion":
+        train_data = dset.FashionMNIST(root, train=True, transform=train_transform, download=False)
+        test_data = dset.FashionMNIST(root, train=False, transform=test_transform, download=False)
+        assert len(train_data) == 50000 and len(test_data) == 10000
     if name == 'cifar10':
-        train_data = dset.CIFAR10(root, train=True, transform=train_transform, download=True)
-        test_data = dset.CIFAR10(root, train=False, transform=test_transform, download=True)
+        train_data = dset.CIFAR10(root, train=True, transform=train_transform, download=False)
+        test_data = dset.CIFAR10(root, train=False, transform=test_transform, download=False)
         assert len(train_data) == 50000 and len(test_data) == 10000
     elif name == 'cifar100':
         train_data = dset.CIFAR100(root, train=True, transform=train_transform, download=True)
