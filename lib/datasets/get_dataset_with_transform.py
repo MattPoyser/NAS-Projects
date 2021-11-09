@@ -375,11 +375,11 @@ def get_datasets_augment(name, root, cutout):
         train_data = dset.MNIST(root, train=True, transform=train_transform, download=False)
         test_data = dset.MNIST(root, train=False, transform=test_transform, download=False)
         assert len(train_data) == 60000 and len(test_data) == 10000
-    if name == "fashion":
+    elif name == "fashion":
         train_data = dset.FashionMNIST(root, train=True, transform=train_transform, download=False)
         test_data = dset.FashionMNIST(root, train=False, transform=test_transform, download=False)
         assert len(train_data) == 60000 and len(test_data) == 10000, f"{len(train_data)} / {len(test_data)}"
-    if name == 'cifar10':
+    elif name == 'cifar10':
         train_data = dset.CIFAR10(root, train=True, transform=train_transform, download=False)
         test_data = dset.CIFAR10(root, train=False, transform=test_transform, download=False)
         assert len(train_data) == 50000 and len(test_data) == 10000
