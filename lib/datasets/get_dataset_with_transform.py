@@ -311,6 +311,12 @@ def get_datasets_augment(name, root, cutout):
     elif name.startswith('ImageNet16'):
         mean = [x / 255 for x in [122.68, 116.66, 104.01]]
         std = [x / 255 for x in [63.22, 61.26, 65.09]]
+    elif name == 'mnist':
+        mean = [0.13066051707548254]
+        std = [0.30810780244715075]
+    elif name == 'fashion':
+        mean = [0.28604063146254594]
+        std = [0.35302426207299326]
     else:
         raise TypeError("Unknow dataset : {:}".format(name))
 
