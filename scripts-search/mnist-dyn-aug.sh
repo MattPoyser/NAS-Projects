@@ -31,7 +31,7 @@ data_path="/home2/lgfm95/mnist/"
 save_dir=./output/search-shape/${dataset}-${model}-${optim}-Gumbel_${gumbel_min}_${gumbel_max}-${expected_FLOP_ratio}
 
 # normal training
-xsave_dir=${save_dir}/seed-${rseed}-NMT
+xsave_dir=${save_dir}/${subset_size}aa${hardness}aa${mastery}/seed-${rseed}-NMT
 OMP_NUM_THREADS=4 python3 ./exps/basic-main.py --dataset ${dataset} \
 --data_path ${data_path} \
 --model_config ${save_dir}/${subset_size}aa${hardness}aa${mastery}/seed-${rseed}-last.config \
@@ -42,7 +42,7 @@ OMP_NUM_THREADS=4 python3 ./exps/basic-main.py --dataset ${dataset} \
 --batch_size 256 --rand_seed ${rseed} --workers 6 \
 --eval_frequency 1 --print_freq 100 --print_freq_eval 200
 # KD training
-xsave_dir=${save_dir}/seed-${rseed}-KDT
+xsave_dir=${save_dir}/${subset_size}aa${hardness}aa${mastery}/seed-${rseed}-KDT
 OMP_NUM_THREADS=4 python3 ./exps/KD-main.py --dataset ${dataset} \
 --data_path ${data_path} \
 --model_config  ${save_dir}/${subset_size}aa${hardness}aa${mastery}/seed-${rseed}-last.config \
