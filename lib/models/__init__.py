@@ -16,10 +16,7 @@ def get_cifar_models(config):
   super_type = getattr(config, 'super_type', 'basic')
   if super_type == 'basic':
     if config.arch == 'resnet':
-      try:
-        return CifarResNet(config.module, config.depth, config.class_num, config.zero_init_residual, grayscale=config.grayscale)
-      except AttributeError: # grayscale not in config, therefore must be loading teacher
-        return CifarResNet(config.module, config.depth, config.class_num, config.zero_init_residual)
+      return CifarResNet(config.module, config.depth, config.class_num, config.zero_init_residual)
     elif config.arch == 'wideresnet':
       return CifarWideResNet(config.depth, config.wide_factor, config.class_num, config.dropout)
     else:

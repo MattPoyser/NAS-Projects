@@ -299,7 +299,7 @@ def get_datasets(name, root, config):
     return train_data, test_data, xshape, class_num
 
 
-def get_datasets_augment(name, root, cutout):
+def get_datasets_augment(name, root, cutout, kd=False):
     if name == 'cifar10':
         mean = [x / 255 for x in [125.3, 123.0, 113.9]]
         std = [x / 255 for x in [63.0, 62.1, 66.7]]
@@ -331,6 +331,13 @@ def get_datasets_augment(name, root, cutout):
         if name == "mnist" or name == "fashion":
             test_transform = transforms.Compose([transforms.RandomCrop(32, padding=4), transforms.ToTensor(), transforms.Normalize(mean, std)])
             xshape = (1, 1, 32, 32)
+        if kd:
+            convertrgb = transforms.Lambda(lambda x: x.repeat(3, 1, 1))
+            newlists = [elem for elem in lists]
+            newlists.append(convertrgb)
+            train_transform = transforms.Compose(newlists)
+            test_transform = transforms.Compose([transforms.RandomCrop(32, padding=4), transforms.ToTensor(), transforms.Normalize(mean, std), convertrgb])
+            xshape = (1, 3, 32, 32) # change back to 3 channel input
     elif name.startswith('ImageNet16'):
         lists = [transforms.RandomHorizontalFlip(), transforms.RandomCrop(16, padding=2), transforms.ToTensor(),
                  transforms.Normalize(mean, std)]
