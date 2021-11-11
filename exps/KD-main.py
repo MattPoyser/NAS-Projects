@@ -36,7 +36,7 @@ def main(args):
   optim_config = load_config(args.optim_config,
                                 {'class_num': class_num, 'KD_alpha': args.KD_alpha, 'KD_temperature': args.KD_temperature},
                                 logger)
-
+  raise AttributeError(model_config)
   # load checkpoint
   teacher_base = load_net_from_checkpoint(args.KD_checkpoint)
   teacher      = torch.nn.DataParallel(teacher_base).cuda()

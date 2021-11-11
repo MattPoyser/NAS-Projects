@@ -51,7 +51,6 @@ def load_config(path, extra, logger):
   Arguments = namedtuple('Configure', ' '.join(content.keys()))
   content   = Arguments(**content)
   if hasattr(logger, 'log'): logger.log('{:}'.format(content))
-  raise AttributeError(content)
   return content
 
 
