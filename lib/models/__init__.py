@@ -12,6 +12,7 @@ from .clone_weights import init_from_model
 def get_cifar_models(config):
   from .CifarResNet      import CifarResNet
   from .CifarWideResNet  import CifarWideResNet
+  print(config)
   
   super_type = getattr(config, 'super_type', 'basic')
   if super_type == 'basic':
