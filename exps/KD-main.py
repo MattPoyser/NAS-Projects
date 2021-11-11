@@ -25,7 +25,7 @@ def main(args):
   prepare_seed(args.rand_seed)
   logger = prepare_logger(args)
   
-  train_data, valid_data, xshape, class_num = get_datasets_augment(args.dataset, args.data_path, args.cutout_length)
+  train_data, valid_data, xshape, class_num = get_datasets_augment(args.dataset, args.data_path, args.cutout_length, kd=True)
   train_loader = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size, shuffle=True , num_workers=args.workers, pin_memory=True)
   valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=args.batch_size, shuffle=False, num_workers=args.workers, pin_memory=True)
   # get configures
