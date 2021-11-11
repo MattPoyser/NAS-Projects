@@ -16,8 +16,7 @@ def get_cifar_models(config):
   super_type = getattr(config, 'super_type', 'basic')
   if super_type == 'basic':
     if config.arch == 'resnet':
-      raise AttributeError("grep here")
-      return CifarResNet(config.module, config.depth, config.class_num, config.zero_init_residual)
+      return CifarResNet(config.module, config.depth, config.class_num, config.zero_init_residual, grayscale=config.grayscale)
     elif config.arch == 'wideresnet':
       return CifarWideResNet(config.depth, config.wide_factor, config.class_num, config.dropout)
     else:
