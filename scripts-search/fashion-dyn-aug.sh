@@ -15,27 +15,27 @@ echo $# arguments
 #  echo "TORCH_HOME : $TORCH_HOME"
 #fi
 
-dataset=mnist
+dataset=fashion
 model=ResNet110
 optim=CIFARX
 batch=256
 gumbel_min=0.1
 gumbel_max=5
 expected_FLOP_ratio=0.47
-rseed=$4
+rseed=-1
 subset_size=$1
 hardness=$2
 mastery=$3
-data_path="/home2/lgfm95/mnist/"
-#data_path="/data/mnist/"
+#data_path="/home2/lgfm95/cifar10/"
+data_path="/home2/lgfm95/fashionMnist/"
 
 save_dir=./output/search-shape/${dataset}-${model}-${optim}-Gumbel_${gumbel_min}_${gumbel_max}-${expected_FLOP_ratio}
 
 # normal training
 xsave_dir=${save_dir}/seed-${rseed}-NMT
-OMP_NUM_THREADS=4 python3 ./exps/basic-main.py --dataset ${dataset} \
---data_path ${data_path} \
---model_config ${save_dir}/${subset_size}aa${hardness}aa${mastery}/seed-${rseed}-last.config \
+OMP_NUM_THREADS=4 python ./exps/basic-main.py --dataset ${dataset} \
+--data_path $TORCH_HOME/cifar.python \
+--model_config ${save_dir}/seed-${rseed}-last.config \
 --optim_config ./configs/opts/CIFAR-E300-W5-L1-COS.config \
 --procedure    basic \
 --save_dir     ${xsave_dir} \
@@ -44,9 +44,9 @@ OMP_NUM_THREADS=4 python3 ./exps/basic-main.py --dataset ${dataset} \
 --eval_frequency 1 --print_freq 100 --print_freq_eval 200
 # KD training
 xsave_dir=${save_dir}/seed-${rseed}-KDT
-OMP_NUM_THREADS=4 python3 ./exps/KD-main.py --dataset ${dataset} \
---data_path ${data_path} \
---model_config  ${save_dir}/${subset_size}aa${hardness}aa${mastery}/seed-${rseed}-last.config \
+OMP_NUM_THREADS=4 python ./exps/KD-main.py --dataset ${dataset} \
+--data_path $TORCH_HOME/cifar.python \
+--model_config  ${save_dir}/seed-${rseed}-last.config \
 --optim_config  ./configs/opts/CIFAR-E300-W5-L1-COS.config \
 --KD_checkpoint ./.latent-data/basemodels/${dataset}/${model}.pth \
 --procedure    Simple-KD \
