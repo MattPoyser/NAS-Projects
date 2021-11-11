@@ -9,7 +9,7 @@ if str(lib_dir) not in sys.path: sys.path.insert(0, str(lib_dir))
 from config_utils import load_config, obtain_cls_kd_args as obtain_args
 from procedures   import prepare_seed, prepare_logger, save_checkpoint, copy_checkpoint
 from procedures   import get_optim_scheduler, get_procedures
-from datasets     import get_datasets
+from datasets     import get_datasets, get_datasets_augment
 from models       import obtain_model, load_net_from_checkpoint
 from utils        import get_model_infos
 from log_utils    import AverageMeter, time_string, convert_secs2time
@@ -25,7 +25,7 @@ def main(args):
   prepare_seed(args.rand_seed)
   logger = prepare_logger(args)
   
-  train_data, valid_data, xshape, class_num = get_datasets(args.dataset, args.data_path, args.cutout_length)
+  train_data, valid_data, xshape, class_num = get_datasets_augment(args.dataset, args.data_path, args.cutout_length)
   train_loader = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size, shuffle=True , num_workers=args.workers, pin_memory=True)
   valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=args.batch_size, shuffle=False, num_workers=args.workers, pin_memory=True)
   # get configures
