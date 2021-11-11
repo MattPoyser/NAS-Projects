@@ -62,6 +62,7 @@ def get_imagenet_models(config):
 
 def obtain_model(config):
   if config.dataset == 'cifar':
+    raise AttributeError(config)
     return get_cifar_models(config)
   elif config.dataset == 'imagenet':
     return get_imagenet_models(config)
