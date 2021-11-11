@@ -102,5 +102,4 @@ def dict2config(xdict, logger):
   Arguments = namedtuple('Configure', ' '.join(xdict.keys()))
   content   = Arguments(**xdict)
   if hasattr(logger, 'log'): logger.log('{:}'.format(content))
-  raise AttributeError(xdict)
   return content
