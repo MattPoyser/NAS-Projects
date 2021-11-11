@@ -29,7 +29,10 @@ def main(args):
   train_loader = torch.utils.data.DataLoader(train_data, batch_size=args.batch_size, shuffle=True , num_workers=args.workers, pin_memory=True)
   valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=args.batch_size, shuffle=False, num_workers=args.workers, pin_memory=True)
   # get configures
-  model_config = load_config(args.model_config, {'class_num': class_num}, logger)
+  grayscale = False
+  if args.dataset == "mnist" or args.dataset == "fashion":
+      grayscale = True
+  model_config = load_config(args.model_config, {'class_num': class_num, 'grayscale': grayscale}, logger)
   optim_config = load_config(args.optim_config,
                                 {'class_num': class_num, 'KD_alpha': args.KD_alpha, 'KD_temperature': args.KD_temperature},
                                 logger)
