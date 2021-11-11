@@ -106,7 +106,7 @@ class ResNetBottleneck(nn.Module):
 
 class CifarResNet(nn.Module):
 
-  def __init__(self, block_name, depth, num_classes, zero_init_residual):
+  def __init__(self, block_name, depth, num_classes, zero_init_residual, grayscale=False):
     super(CifarResNet, self).__init__()
 
     #Model type specifies number of layers for CIFAR-10 and CIFAR-100 model
@@ -124,7 +124,10 @@ class CifarResNet(nn.Module):
     self.message     = 'CifarResNet : Block : {:}, Depth : {:}, Layers for each block : {:}'.format(block_name, depth, layer_blocks)
     self.num_classes = num_classes
     self.channels    = [16]
-    self.layers      = nn.ModuleList( [ ConvBNReLU(3, 16, 3, 1, 1, False, True) ] )
+    input_channels = 1
+    if grayscale:
+      input_channels = 3
+    self.layers      = nn.ModuleList( [ ConvBNReLU(input_channels, 16, 3, 1, 1, False, True) ] )
     for stage in range(3):
       for iL in range(layer_blocks):
         iC     = self.channels[-1]
