@@ -14,9 +14,9 @@ def main(kd_checkpoint):
     model = load_net_from_checkpoint(kd_checkpoint)
     # train_data, valid_data, xshape, class_num = get_datasets_augment("mnist", "/hdd/PhD/data/mnist", -1)
     train_data, valid_data, xshape, class_num = get_datasets_augment("mnist", "/home2/lgfm95/mnist", -1)
-    train_loader = torch.utils.data.DataLoader(train_data, batch_size=4, shuffle=True,
+    train_loader = torch.utils.data.DataLoader(train_data, batch_size=128, shuffle=True,
                                                num_workers=0, pin_memory=True)
-    valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=4, shuffle=False,
+    valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=128, shuffle=False,
                                                num_workers=0, pin_memory=True)
 
     criterion = nn.CrossEntropyLoss().cuda()
