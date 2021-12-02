@@ -10,10 +10,12 @@ from datasets import get_datasets, get_datasets_augment
 import torch
 import torch.nn as nn
 
-def main(kd_checkpoint):
+def main(kd_checkpoint, fashion=False):
     model = load_net_from_checkpoint(kd_checkpoint)
     # train_data, valid_data, xshape, class_num = get_datasets_augment("mnist", "/hdd/PhD/data/mnist", -1)
     train_data, valid_data, xshape, class_num = get_datasets_augment("mnist", "/home2/lgfm95/mnist", -1)
+    if fashion:
+        train_data, valid_data, xshape, class_num = get_datasets_augment("fashion", "/home2/lgfm95/fashionMnist", -1)
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=128, shuffle=True,
                                                num_workers=0, pin_memory=True)
     valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=128, shuffle=False,
@@ -60,7 +62,10 @@ def main(kd_checkpoint):
             best = valid_accs.avg
             print("saving")
             # save_checkpoint(model, "/hdd/PhD/nas/tas/mnist110/")
-            save_checkpoint(model, "/home2/lgfm95/nas/tas/mnist110/")
+            if fashion:
+                save_checkpoint(model, "/home2/lgfm95/nas/tas/fashion110/")
+            else:
+                save_checkpoint(model, "/home2/lgfm95/nas/tas/mnist110/")
         print(f"epoch {i} / 50: valid_accuracy: {valid_accs.avg}, valid_loss: {valid_losses.avg}")
 
 
@@ -120,4 +125,9 @@ def save_checkpoint(state, ckpt_dir, is_best=False):
         shutil.copyfile(filename, best_filename)
 
 
-main("./.latent-data/basemodels/mnist/ResNet110.pth")
+def new_main():
+    fashion = True
+    if fashion:
+        main("./.latent-data/basemodels/fashion/ResNet110.pth", fashion=True)
+    else:
+        main("./.latent-data/basemodels/mnist/ResNet110.pth")
