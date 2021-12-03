@@ -11,6 +11,10 @@ import torch
 import torch.nn as nn
 from models.CifarResNet import CifarResNet
 
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--fashion', default=False, type=bool, help="are images fashionMnist?")
+
 def main(kd_checkpoint, fashion=False):
     model = load_net_from_checkpoint(kd_checkpoint)
     checkpoint = torch.load(kd_checkpoint)
@@ -133,12 +137,10 @@ def save_checkpoint(model, model_config, ckpt_dir, is_best=False):
         shutil.copyfile(filename, best_filename)
 
 
-def new_main():
-    fashion = False
+if __name__ == '__main__()':
+    args = parser.parse_args()
+    fashion = args.fashion
     if fashion:
         main("./.latent-data/basemodels/fashion/ResNet110.pth", fashion=True)
     else:
         main("./.latent-data/basemodels/mnist/ResNet110.pth")
-
-
-new_main()
