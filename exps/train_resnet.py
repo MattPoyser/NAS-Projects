@@ -137,7 +137,7 @@ def save_checkpoint(model, model_config, ckpt_dir, is_best=False):
         shutil.copyfile(filename, best_filename)
 
 
-if __name__ == '__main__()':
+if __name__ == '__main__':
     args = parser.parse_args()
     fashion = args.fashion
     if fashion:
