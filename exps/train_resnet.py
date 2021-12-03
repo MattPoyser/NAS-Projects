@@ -131,3 +131,6 @@ def new_main():
         main("./.latent-data/basemodels/fashion/ResNet110.pth", fashion=True)
     else:
         main("./.latent-data/basemodels/mnist/ResNet110.pth")
+
+
+new_main()
