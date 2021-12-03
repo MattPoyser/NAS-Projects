@@ -9,10 +9,16 @@ from models import obtain_model, load_net_from_checkpoint
 from datasets import get_datasets, get_datasets_augment
 import torch
 import torch.nn as nn
+from models.CifarResNet import CifarResNet
 
 def main(kd_checkpoint, fashion=False):
     model = load_net_from_checkpoint(kd_checkpoint)
-    # train_data, valid_data, xshape, class_num = get_datasets_augment("mnist", "/hdd/PhD/data/mnist", -1)
+    checkpoint = torch.load(kd_checkpoint)
+    model_config = checkpoint['model-config']
+    model_config['dataset'] = 'mnist'
+    if fashion:
+        model_config['dataset'] = 'fashion'
+    # train_data, valid_data, xshape, class_num = get_datasets_augment("mnist", "/hdd/PhD/data/mnist", -1, kd=True)
     train_data, valid_data, xshape, class_num = get_datasets_augment("mnist", "/home2/lgfm95/mnist", -1)
     if fashion:
         train_data, valid_data, xshape, class_num = get_datasets_augment("fashion", "/home2/lgfm95/fashionMnist", -1)
@@ -44,8 +50,8 @@ def main(kd_checkpoint, fashion=False):
             optimizer.step()
             if step % 10 == 0:
                 print(f"step {step} / {len(train_loader)}")
-            # if step > 50:
-            #     break
+            if step > 50:
+                break
         print(f"epoch {i} / 50: train_accuracy: {train_accs.avg}, train_loss: {train_losses.avg}")
 
         for step, (images, labels) in enumerate(valid_loader):
@@ -56,16 +62,17 @@ def main(kd_checkpoint, fashion=False):
                 valid_accs.update(accuracy(outputs, labels)[0])
                 if step % 10 == 0:
                     print(f"step {step} / {len(valid_loader)}")
-                # if step > 50:
-                #     break
+                if step > 50:
+                    break
         if valid_accs.avg > best:
             best = valid_accs.avg
             print("saving")
             # save_checkpoint(model, "/hdd/PhD/nas/tas/mnist110/")
             if fashion:
-                save_checkpoint(model, "/home2/lgfm95/nas/tas/fashion110/")
+                save_checkpoint(model, model_config, "/home2/lgfm95/nas/tas/fashion110/")
             else:
-                save_checkpoint(model, "/home2/lgfm95/nas/tas/mnist110/")
+                save_checkpoint(model, model_config, "/home2/lgfm95/nas/tas/mnist110/")
+                # save_checkpoint(model, model_config, "/hdd/PhD/nas/tas/mnist110/")
         print(f"epoch {i} / 50: valid_accuracy: {valid_accs.avg}, valid_loss: {valid_losses.avg}")
 
 
@@ -117,16 +124,17 @@ def accuracy(output, target, topk=(1,)):
 
 
 
-def save_checkpoint(state, ckpt_dir, is_best=False):
+def save_checkpoint(model, model_config, ckpt_dir, is_best=False):
     filename = os.path.join(ckpt_dir, 'checkpoint.pth.tar')
-    torch.save(state, filename)
+    torch.save({'model-config': model_config,
+                'base-model': model.state_dict()}, filename)
     if is_best:
         best_filename = os.path.join(ckpt_dir, 'best.pth.tar')
         shutil.copyfile(filename, best_filename)
 
 
 def new_main():
-    fashion = True
+    fashion = False
     if fashion:
         main("./.latent-data/basemodels/fashion/ResNet110.pth", fashion=True)
     else:

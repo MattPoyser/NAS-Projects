@@ -158,3 +158,60 @@ class CifarResNet(nn.Module):
     features = features.view(features.size(0), -1)
     logits   = self.classifier(features)
     return features, logits
+
+
+
+class GrayResNet(nn.Module):
+
+  def __init__(self, block_name, depth, num_classes, zero_init_residual):
+    super(GrayResNet, self).__init__()
+
+    #Model type specifies number of layers for CIFAR-10 and CIFAR-100 model
+    if block_name == 'ResNetBasicblock':
+      block = ResNetBasicblock
+      assert (depth - 2) % 6 == 0, 'depth should be one of 20, 32, 44, 56, 110'
+      layer_blocks = (depth - 2) // 6
+    elif block_name == 'ResNetBottleneck':
+      block = ResNetBottleneck
+      assert (depth - 2) % 9 == 0, 'depth should be one of 164'
+      layer_blocks = (depth - 2) // 9
+    else:
+      raise ValueError('invalid block : {:}'.format(block_name))
+
+    self.message     = 'CifarResNet : Block : {:}, Depth : {:}, Layers for each block : {:}'.format(block_name, depth, layer_blocks)
+    self.num_classes = num_classes
+    self.channels    = [16]
+    self.layers      = nn.ModuleList( [ ConvBNReLU(1, 16, 3, 1, 1, False, True) ] )
+    for stage in range(3):
+      for iL in range(layer_blocks):
+        iC     = self.channels[-1]
+        planes = 16 * (2**stage)
+        stride = 2 if stage > 0 and iL == 0 else 1
+        module = block(iC, planes, stride)
+        self.channels.append( module.out_dim )
+        self.layers.append  ( module )
+        self.message += "\nstage={:}, ilayer={:02d}/{:02d}, block={:03d}, iC={:3d}, oC={:3d}, stride={:}".format(stage, iL, layer_blocks, len(self.layers)-1, iC, module.out_dim, stride)
+
+    self.avgpool = nn.AvgPool2d(8)
+    self.classifier = nn.Linear(module.out_dim, num_classes)
+    assert sum(x.num_conv for x in self.layers) + 1 == depth, 'invalid depth check {:} vs {:}'.format(sum(x.num_conv for x in self.layers)+1, depth)
+
+    self.apply(initialize_resnet)
+    if zero_init_residual:
+      for m in self.modules():
+        if isinstance(m, ResNetBasicblock):
+          nn.init.constant_(m.conv_b.bn.weight, 0)
+        elif isinstance(m, ResNetBottleneck):
+          nn.init.constant_(m.conv_1x4.bn.weight, 0)
+
+  def get_message(self):
+    return self.message
+
+  def forward(self, inputs):
+    x = inputs
+    for i, layer in enumerate(self.layers):
+      x = layer( x )
+    features = self.avgpool(x)
+    features = features.view(features.size(0), -1)
+    logits   = self.classifier(features)
+    return features, logits

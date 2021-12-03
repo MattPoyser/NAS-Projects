@@ -331,13 +331,13 @@ def get_datasets_augment(name, root, cutout, kd=False):
         if name == "mnist" or name == "fashion":
             test_transform = transforms.Compose([transforms.RandomCrop(32, padding=4), transforms.ToTensor(), transforms.Normalize(mean, std)])
             xshape = (1, 1, 32, 32)
-            if kd:
-                convertrgb = transforms.Lambda(lambda x: x.repeat(3, 1, 1))
-                newlists = [elem for elem in lists]
-                newlists.append(convertrgb)
-                train_transform = transforms.Compose(newlists)
-                test_transform = transforms.Compose([transforms.RandomCrop(32, padding=4), transforms.ToTensor(), transforms.Normalize(mean, std), convertrgb])
-                xshape = (1, 3, 32, 32) # change back to 3 channel input
+            # if kd: no longer needed as we have retrained to have proper grayscale input channel
+            #     convertrgb = transforms.Lambda(lambda x: x.repeat(3, 1, 1))
+            #     newlists = [elem for elem in lists]
+            #     newlists.append(convertrgb)
+            #     train_transform = transforms.Compose(newlists)
+            #     test_transform = transforms.Compose([transforms.RandomCrop(32, padding=4), transforms.ToTensor(), transforms.Normalize(mean, std), convertrgb])
+            #     xshape = (1, 3, 32, 32) # change back to 3 channel input
     elif name.startswith('ImageNet16'):
         lists = [transforms.RandomHorizontalFlip(), transforms.RandomCrop(16, padding=2), transforms.ToTensor(),
                  transforms.Normalize(mean, std)]

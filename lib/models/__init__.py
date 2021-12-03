@@ -66,6 +66,9 @@ def obtain_model(config):
     return get_cifar_models(config)
   elif config.dataset == 'imagenet':
     return get_imagenet_models(config)
+  elif config.dataset == 'mnist' or config.dataset == 'fashion':
+    from .CifarResNet      import GrayResNet
+    return GrayResNet(config.module, config.depth, config.class_num, config.zero_init_residual)
   else:
     raise ValueError('invalid dataset in the model config : {:}'.format(config))
 
