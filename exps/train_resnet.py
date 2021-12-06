@@ -55,8 +55,8 @@ def main(kd_checkpoint, fashion=False):
             optimizer.step()
             if step % 10 == 0:
                 print(f"step {step} / {len(train_loader)}")
-            if step > 50:
-                break
+            # if step > 50:
+            #     break
         print(f"epoch {i} / 50: train_accuracy: {train_accs.avg}, train_loss: {train_losses.avg}")
 
         for step, (images, labels) in enumerate(valid_loader):
@@ -67,8 +67,8 @@ def main(kd_checkpoint, fashion=False):
                 valid_accs.update(accuracy(outputs, labels)[0])
                 if step % 10 == 0:
                     print(f"step {step} / {len(valid_loader)}")
-                if step > 50:
-                    break
+                # if step > 50:
+                #     break
         if valid_accs.avg > best:
             best = valid_accs.avg
             print("saving")
