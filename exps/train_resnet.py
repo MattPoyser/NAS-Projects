@@ -16,16 +16,17 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--fashion', default=False, type=bool, help="are images fashionMnist?")
 
 def main(kd_checkpoint, fashion=False):
+    # kd_checkpoint = "/hdd/PhD/nas/tas/mnist110/checkpoint.pth.tar"
     model = load_net_from_checkpoint(kd_checkpoint)
     checkpoint = torch.load(kd_checkpoint)
     model_config = checkpoint['model-config']
-    model_config['dataset'] = 'mnist'
-    if fashion:
-        model_config['dataset'] = 'fashion'
+    # model_config['dataset'] = 'mnist'
+    # if fashion:
+    #     model_config['dataset'] = 'fashion'
     # train_data, valid_data, xshape, class_num = get_datasets_augment("mnist", "/hdd/PhD/data/mnist", -1, kd=True)
-    train_data, valid_data, xshape, class_num = get_datasets_augment("mnist", "/home2/lgfm95/mnist", -1)
+    train_data, valid_data, xshape, class_num = get_datasets_augment("mnist", "/home2/lgfm95/mnist", -1, kd=True)
     if fashion:
-        train_data, valid_data, xshape, class_num = get_datasets_augment("fashion", "/home2/lgfm95/fashionMnist", -1)
+        train_data, valid_data, xshape, class_num = get_datasets_augment("fashion", "/home2/lgfm95/fashionMnist", -1, kd=True)
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=128, shuffle=True,
                                                num_workers=0, pin_memory=True)
     valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=128, shuffle=False,
@@ -34,7 +35,7 @@ def main(kd_checkpoint, fashion=False):
     criterion = nn.CrossEntropyLoss().cuda()
     optimizer = torch.optim.SGD(model.parameters(), 1e-3, momentum=0.9)
 
-    model.layers[0].conv = nn.Conv2d(1, 16, kernel_size=(3,3), stride=(1,1), padding=(1,1), bias=False)
+    # model.layers[0].conv = nn.Conv2d(1, 16, kernel_size=(3,3), stride=(1,1), padding=(1,1), bias=False)
     print(model.layers[0].conv)
 
     best = 0
