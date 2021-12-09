@@ -11,11 +11,18 @@ import torch
 import torch.nn as nn
 from models.CifarResNet import CifarResNet
 
+import wandb
+
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--fashion', default=False, type=bool, help="are images fashionMnist?")
 
 def main(kd_checkpoint, fashion=False):
+    wandb.init(
+        entity="mattpoyser",
+        project="tas",
+        config=fashion,
+    )
     # kd_checkpoint = "/hdd/PhD/nas/tas/mnist110/checkpoint.pth.tar"
     model = load_net_from_checkpoint(kd_checkpoint)
     checkpoint = torch.load(kd_checkpoint)
@@ -58,6 +65,7 @@ def main(kd_checkpoint, fashion=False):
             # if step > 50:
             #     break
         print(f"epoch {i} / 50: train_accuracy: {train_accs.avg}, train_loss: {train_losses.avg}")
+        wandb.log({"train_acc": train_accs.avg, "train_loss": train_losses.avg})
 
         for step, (images, labels) in enumerate(valid_loader):
             with torch.no_grad():
@@ -79,7 +87,8 @@ def main(kd_checkpoint, fashion=False):
                 save_checkpoint(model, model_config, "/home2/lgfm95/nas/tas/mnist110/")
                 # save_checkpoint(model, model_config, "/hdd/PhD/nas/tas/mnist110/")
         print(f"epoch {i} / 50: valid_accuracy: {valid_accs.avg}, valid_loss: {valid_losses.avg}")
-
+        wandb.log({"valid_acc": valid_accs.avg, "valid_loss": valid_losses.avg})
+        wandb.finish
 
 
 class AverageMeter(object):
