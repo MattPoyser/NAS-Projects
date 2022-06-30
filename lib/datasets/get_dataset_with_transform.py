@@ -182,7 +182,7 @@ def get_datasets(name, root, config):
         dynamic_name = "cifar10"
         n_classes = 10
         # nz = 32
-        auto_resume = "/home2/lgfm95/hem/perceptual/ganPercCifar10Good.pth.tar"
+        auto_resume = "/home2/lgfm95/hem/perceptual/tripletCifarMseKGood.pth.tar"
         # assert len(train_data) == 50000 and len(test_data) == 10000
     elif name == 'cifar100':
         train_data = dset.CIFAR100(root, train=True, transform=train_transform, download=True)
@@ -266,9 +266,8 @@ def get_datasets(name, root, config):
             subset_size=config.subset_size,
             is_csv=config.is_csv,
             is_detection=is_detection,
-            convert_to_paths=convert_to_paths,
-            convert_to_lbl_paths=convert_to_lbl_paths,
-            bede=False)
+            is_concat=False,
+            seed=1337) # TODO
         # is_csv=False)
         if name == "imagenet":
             test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name,
