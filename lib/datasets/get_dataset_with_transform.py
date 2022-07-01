@@ -174,14 +174,14 @@ def get_datasets(name, root, config):
     convert_to_lbl_paths = False
     isize = 64
     nz = 8
-    aisize = 256
+    aisize = 3
     if name == 'cifar10':
         dset_cls = dset.CIFAR10
         # train_data = dset.CIFAR10(root, train=True, transform=train_transform, download=True)
         # test_data = dset.CIFAR10(root, train=False, transform=test_transform, download=True)
         dynamic_name = "cifar10"
         n_classes = 10
-        # nz = 32
+        nz = 32
         auto_resume = "/home2/lgfm95/hem/perceptual/tripletCifarMseKGood.pth.tar"
         # assert len(train_data) == 50000 and len(test_data) == 10000
     elif name == 'cifar100':
@@ -209,12 +209,14 @@ def get_datasets(name, root, config):
         n_classes = 10
         dynamic_name = "mnist"
         grayscale = True
+        aisize = 1
         auto_resume = "/home2/lgfm95/hem/perceptual/ganPercMnistGood.pth.tar"
     elif name == 'fashion':
         dset_cls = dset.FashionMNIST
         n_classes = 10
         dynamic_name = "fashion"
         grayscale = True
+        aisize = 1
         auto_resume = "/home2/lgfm95/hem/perceptual/ganPercFashionGood.pth.tar"
     elif name == 'ImageNet16':
         train_data = ImageNet16(root, True, train_transform)
