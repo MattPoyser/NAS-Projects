@@ -13,7 +13,7 @@ sys.path.insert(0, "/home/matt/Documents/hem/perceptual")
 sys.path.insert(0, "/home2/lgfm95/hem/perceptual")
 sys.path.insert(0, "C:\\Users\\Matt\\Documents\\PhD\\x11\\HEM\\perceptual")
 sys.path.insert(0, "/hdd/PhD/hem/perceptual")
-from dataloader import DynamicDataset
+from dataloader_classification import DynamicDataset
 from subloader import SubDataset
 
 Dataset2Class = {'cifar10': 10,
