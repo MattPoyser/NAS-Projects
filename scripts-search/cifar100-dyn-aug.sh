@@ -30,7 +30,7 @@ data_path="/home2/lgfm95/cifar100/"
 #data_path="/data/cifar-100/"
 #data_path="/hdd/PhD/data/cifar100/"
 
-save_dir=./output/search-shape/${dataset}-${model}-${optim}-Gumbel_${gumbel_min}_${gumbel_max}-${expected_FLOP_ratio}
+save_dir=./output/search-shape/cifar10-${model}-${optim}-Gumbel_${gumbel_min}_${gumbel_max}-${expected_FLOP_ratio}
 
 # normal training
 xsave_dir=${save_dir}/seed-${rseed}-NMT
