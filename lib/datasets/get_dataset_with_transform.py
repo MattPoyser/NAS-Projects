@@ -187,6 +187,10 @@ def get_datasets(name, root, config):
     elif name == 'cifar100':
         train_data = dset.CIFAR100(root, train=True, transform=train_transform, download=True)
         test_data = dset.CIFAR100(root, train=False, transform=test_transform, download=True)
+        dynamic_name = "cifar100"
+        n_classes = 100
+        nz = 32
+        auto_resume = "/home2/lgfm95/hem/perceptual/tripletCifarMseKGood.pth.tar"
         assert len(train_data) == 50000 and len(test_data) == 10000
     elif name.startswith('imagenet-1k') or name == 'imagenet':
         # train_data = dset.ImageFolder(osp.join(root, 'train'), train_transform)
