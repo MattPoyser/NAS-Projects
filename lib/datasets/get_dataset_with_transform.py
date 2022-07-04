@@ -187,6 +187,7 @@ def get_datasets(name, root, config):
     elif name == 'cifar100':
         train_data = dset.CIFAR100(root, train=True, transform=train_transform, download=True)
         test_data = dset.CIFAR100(root, train=False, transform=test_transform, download=True)
+        dset_cls = dset.CIFAR100
         dynamic_name = "cifar100"
         n_classes = 100
         nz = 32
