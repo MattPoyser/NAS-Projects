@@ -49,7 +49,7 @@ OMP_NUM_THREADS=4 python3 ./exps/KD-main.py --dataset ${dataset} \
 --data_path ${data_path} \
 --model_config  ${save_dir}/${subset_size}aa${hardness}aa${mastery}/seed-${rseed}-last.config \
 --optim_config  ./configs/opts/CIFAR-E300-W5-L1-COS.config \
---KD_checkpoint ./.latent-data/basemodels/cifar10/${model}.pth \
+--KD_checkpoint ./.latent-data/basemodels/${dataset}/${model}.pth \
 --procedure    Simple-KD \
 --save_dir     ${xsave_dir} \
 --KD_alpha 0.9 --KD_temperature 4 \
