@@ -18,7 +18,7 @@ echo $# arguments
 dataset=cifar100
 model=ResNet1001
 optim=CIFARX
-batch=128
+batch=32
 gumbel_min=0.1
 gumbel_max=5
 expected_FLOP_ratio=0.47
