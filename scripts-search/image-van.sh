@@ -27,7 +27,7 @@ subset_size=$1
 hardness=$2
 mastery=$3
 #data_path="/home2/lgfm95/cifar10/"
-data_path="/home2/lgfm95/ILSVRC/"
+data_path="/home2/lgfm95/ILSVRC/Data/CLS-LOC"
 
 save_dir=./output/search-shape/${dataset}-${model}-${optim}-Gumbel_${gumbel_min}_${gumbel_max}-${expected_FLOP_ratio}
 
