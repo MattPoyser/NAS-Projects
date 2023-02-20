@@ -284,10 +284,16 @@ def get_datasets(name, root, config):
     else:
         if config.vanilla:
             if name == "imagenet":
-                subset_size = 10000
-                train_data = SubDataset(transforms=train_transform, val_transforms=test_transform, val=False,
-                                        dataset_name=dynamic_name, subset_size=subset_size)
-                test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name, subset_size=subset_size)
+                # subset_size = 10000
+                # train_data = SubDataset(transforms=train_transform, val_transforms=test_transform, val=False,
+                #                         dataset_name=dynamic_name, subset_size=subset_size)
+                # test_data = SubDataset(transforms=test_transform, val=True, dataset_name=dynamic_name, subset_size=subset_size)
+                train_data = dset.ImageFolder(
+                    root,
+                    train_transform)
+                test_data = dset.ImageFolder(
+                    root,
+                    test_transform)
             else:
                 train_data = dset_cls(root=root, train=True, download=False, transform=train_transform)
                 test_data = dset_cls(root=root, train=False, download=False, transform=test_transform)
