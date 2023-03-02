@@ -15,9 +15,9 @@ echo $# arguments
 #  echo "TORCH_HOME : $TORCH_HOME"
 #fi
 
-dataset=cifar100
-model=ResNext50-32x4dV2
-optim=CIFARX
+dataset=imagenet
+model=ResNet50V1
+optim=ImageNet-ResNet
 batch=256
 gumbel_min=0.1
 gumbel_max=5
@@ -34,26 +34,26 @@ data_path="/home2/lgfm95/ILSVRC/Data/CLS-LOC/"
 save_dir=./output/search-shape/cifar100-ResNet32-CIFARX-Gumbel_0.1_5-0.47
 
 # normal training
-xsave_dir=${save_dir}/seed-19592-NMT
+xsave_dir=${save_dir}/seed-${rseed}-NMT
 OMP_NUM_THREADS=4 python3 ./exps/basic-main.py --dataset ${dataset} \
 --data_path ${data_path} \
 --model_config ${save_dir}/${subset_size}aa${hardness}aa${mastery}/seed-${rseed}-last.config \
---optim_config ./configs/opts/CIFAR-E300-W5-L1-COS.config \
+--optim_config ./configs/opts/ImageNet-E120-Cos-Soft.config \
 --procedure    basic \
 --save_dir     ${xsave_dir} \
 --cutout_length -1 \
---batch_size 256 --rand_seed ${rseed} --workers 6 \
+--batch_size ${batch} --rand_seed ${rseed} --workers 6 \
 --eval_frequency 1 --print_freq 100 --print_freq_eval 200
 # KD training
 xsave_dir=${save_dir}/seed-${rseed}-KDT
 OMP_NUM_THREADS=4 python3 ./exps/KD-main.py --dataset ${dataset} \
 --data_path ${data_path} \
 --model_config  ${save_dir}/${subset_size}aa${hardness}aa${mastery}/seed-${rseed}-last.config \
---optim_config  ./configs/opts/CIFAR-E300-W5-L1-COS.config \
+--optim_config  ./configs/opts/ImageNet-E120-Cos-Soft.config \
 --KD_checkpoint ./.latent-data/basemodels/${dataset}/${model}.pth \
 --procedure    Simple-KD \
 --save_dir     ${xsave_dir} \
 --KD_alpha 0.9 --KD_temperature 4 \
 --cutout_length -1 \
---batch_size 256 --rand_seed ${rseed} --workers 6 \
+--batch_size ${batch} --rand_seed ${rseed} --workers 6 \
 --eval_frequency 1 --print_freq 100 --print_freq_eval 200
