@@ -146,8 +146,7 @@ class InferCifarResNet(nn.Module):
     self.avgpool    = nn.AvgPool2d(8)
     # self.classifier = nn.Linear(self.xchannels[-1], num_classes)
     if pipe:
-      assert False, iCs
-      module = block([57,44], 5, pipe=True) # hardcoded input and output values. 44 based on common option among
+      module = block([57,44,44], 5, pipe=True) # hardcoded input and output values. 44 based on common option among
       # runs. just a medium for high stride anyway
       self.layers.append ( module )
       self.classifier = nn.Linear(self.xchannels[-1], num_classes)
