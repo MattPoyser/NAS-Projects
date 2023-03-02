@@ -144,8 +144,9 @@ class InferCifarResNet(nn.Module):
           break
   
     self.avgpool    = nn.AvgPool2d(8)
-    self.classifier = nn.Linear(self.xchannels[-1], num_classes)
-    
+    # self.classifier = nn.Linear(self.xchannels[-1], num_classes)
+    self.classifier = nn.Linear(self.xchannels[-1]*7*7, num_classes)
+
     self.apply(initialize_resnet)
     if zero_init_residual:
       for m in self.modules():
@@ -160,9 +161,7 @@ class InferCifarResNet(nn.Module):
   def forward(self, inputs):
     x = inputs
     for i, layer in enumerate(self.layers):
-      print(x.shape)
       x = layer( x )
-    print(x.shape)
     features = self.avgpool(x)
     print(features.shape)
     features = features.view(features.size(0), -1)
