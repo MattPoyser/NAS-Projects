@@ -122,7 +122,7 @@ class InferCifarResNet(nn.Module):
 
     self.message     = 'InferWidthCifarResNet : Depth : {:} , Layers for each block : {:}'.format(depth, layer_blocks)
     self.num_classes = num_classes
-    self.num_classes = 1000
+    self.num_classes = 1000 # temporary imagenet piping fix
     self.xchannels   = xchannels
     self.layers      = nn.ModuleList( [ ConvBNReLU(xchannels[0], xchannels[1], 3, 1, 1, False, has_avg=False, has_bn=True, has_relu=True) ] )
     last_channel_idx = 1
@@ -160,8 +160,12 @@ class InferCifarResNet(nn.Module):
   def forward(self, inputs):
     x = inputs
     for i, layer in enumerate(self.layers):
+      print(x.shape)
       x = layer( x )
+    print(x.shape)
     features = self.avgpool(x)
+    print(features.shape)
     features = features.view(features.size(0), -1)
+    print(features.shape)
     logits   = self.classifier(features)
     return features, logits
