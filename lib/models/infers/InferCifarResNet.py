@@ -104,7 +104,7 @@ class ResNetBottleneck(nn.Module):
 
 class InferCifarResNet(nn.Module):
 
-  def __init__(self, block_name, depth, xblocks, xchannels, num_classes, zero_init_residual):
+  def __init__(self, block_name, depth, xblocks, xchannels, num_classes, zero_init_residual, pipe=False):
     super(InferCifarResNet, self).__init__()
 
     #Model type specifies number of layers for CIFAR-10 and CIFAR-100 model
@@ -145,7 +145,13 @@ class InferCifarResNet(nn.Module):
   
     self.avgpool    = nn.AvgPool2d(8)
     # self.classifier = nn.Linear(self.xchannels[-1], num_classes)
-    self.classifier = nn.Linear(self.xchannels[-1]*7*7, num_classes)
+    if pipe:
+      module = block(44, 5)
+      self.layers.append ( module )
+      self.classifier = nn.Linear(self.xchannels[-1], num_classes)
+
+    else:
+      self.classifier = nn.Linear(self.xchannels[-1]*7*7, num_classes)
 
     self.apply(initialize_resnet)
     if zero_init_residual:

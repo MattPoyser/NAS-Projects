@@ -33,7 +33,7 @@ def get_cifar_models(config):
     elif infer_mode == 'depth':
       return InferDepthCifarResNet(config.module, config.depth, config.xblocks, config.class_num, config.zero_init_residual)
     elif infer_mode == 'shape':
-      return InferCifarResNet(config.module, config.depth, config.xblocks, config.xchannels, config.class_num, config.zero_init_residual)
+      return InferCifarResNet(config.module, config.depth, config.xblocks, config.xchannels, config.class_num, config.zero_init_residual, config.pipe)
     else:
       raise ValueError('invalid infer-mode : {:}'.format(infer_mode))
   else:
