@@ -18,6 +18,7 @@ def obtain_cls_kd_args():
   add_shared_args( parser )
   # Optimization options
   parser.add_argument('--batch_size',       type=int,   default=2,      help='Batch size for training.')
+  parser.add_argument('--pipe', action='store_true', help='use additional piping for imagenet training?')
   args = parser.parse_args()
 
   if args.rand_seed is None or args.rand_seed < 0:
