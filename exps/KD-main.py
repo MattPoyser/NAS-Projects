@@ -40,6 +40,8 @@ def main(args):
   # load checkpoint
   teacher_base = load_net_from_checkpoint(args.KD_checkpoint)
   teacher      = torch.nn.DataParallel(teacher_base).cuda()
+  if args.pipe:
+      model_config["pipe"] = True
   base_model   = obtain_model(model_config)
   flop, param  = get_model_infos(base_model, xshape)
   logger.log('Student ====>>>>:\n{:}'.format(base_model))
