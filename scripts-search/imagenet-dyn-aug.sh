@@ -34,7 +34,7 @@ data_path="/home2/lgfm95/ILSVRC/Data/CLS-LOC/"
 save_dir=./output/search-shape/cifar100-ResNet32-CIFARX-Gumbel_0.1_5-0.47
 
 # normal training
-xsave_dir=${save_dir}/seed-${rseed}-NMT
+xsave_dir=${save_dir}/seed-${rseed}-NMT-Image
 OMP_NUM_THREADS=4 python3 ./exps/basic-main.py --dataset ${dataset} \
 --data_path ${data_path} \
 --model_config ${save_dir}/${subset_size}aa${hardness}aa${mastery}/seed-${rseed}-last.config \
@@ -45,7 +45,7 @@ OMP_NUM_THREADS=4 python3 ./exps/basic-main.py --dataset ${dataset} \
 --batch_size ${batch} --rand_seed ${rseed} --workers 6 \
 --eval_frequency 1 --print_freq 100 --print_freq_eval 200
 # KD training
-xsave_dir=${save_dir}/seed-${rseed}-KDT
+xsave_dir=${save_dir}/seed-${rseed}-KDT-Image
 OMP_NUM_THREADS=4 python3 ./exps/KD-main.py --dataset ${dataset} \
 --data_path ${data_path} \
 --model_config  ${save_dir}/${subset_size}aa${hardness}aa${mastery}/seed-${rseed}-last.config \
