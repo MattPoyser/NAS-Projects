@@ -318,7 +318,7 @@ def get_datasets_augment(name, root, cutout, kd=False):
     elif name == 'cifar100':
         mean = [x / 255 for x in [129.3, 124.1, 112.4]]
         std = [x / 255 for x in [68.2, 65.4, 70.4]]
-    elif name.startswith('imagenet-1k'):
+    elif name.startswith('imagenet-1k') or name == 'imagenet':
         mean, std = [0.485, 0.456, 0.406], [0.229, 0.224, 0.225]
     elif name.startswith('ImageNet16'):
         mean = [x / 255 for x in [122.68, 116.66, 104.01]]
@@ -365,9 +365,9 @@ def get_datasets_augment(name, root, cutout, kd=False):
         test_transform = transforms.Compose(
             [transforms.CenterCrop(80), transforms.ToTensor(), transforms.Normalize(mean, std)])
         xshape = (1, 3, 32, 32)
-    elif name.startswith('imagenet-1k'):
+    elif name.startswith('imagenet-1k') or name == 'imagenet':
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        if name == 'imagenet-1k':
+        if name == 'imagenet-1k' or name == 'imagenet':
             xlists = [transforms.RandomResizedCrop(224)]
             xlists.append(
                 transforms.ColorJitter(
@@ -406,7 +406,7 @@ def get_datasets_augment(name, root, cutout, kd=False):
         train_data = dset.CIFAR100(root, train=True, transform=train_transform, download=True)
         test_data = dset.CIFAR100(root, train=False, transform=test_transform, download=True)
         assert len(train_data) == 50000 and len(test_data) == 10000
-    elif name.startswith('imagenet-1k'):
+    elif name.startswith('imagenet-1k') or name == 'imagenet':
         train_data = dset.ImageFolder(osp.join(root, 'train'), train_transform)
         test_data = dset.ImageFolder(osp.join(root, 'val'), test_transform)
         assert len(train_data) == 1281167 and len(
