@@ -167,5 +167,6 @@ class InferCifarResNet(nn.Module):
     print(features.shape)
     features = features.view(features.size(0), -1)
     print(features.shape)
+    assert False, self.classifier
     logits   = self.classifier(features)
     return features, logits
