@@ -122,6 +122,7 @@ class InferCifarResNet(nn.Module):
 
     self.message     = 'InferWidthCifarResNet : Depth : {:} , Layers for each block : {:}'.format(depth, layer_blocks)
     self.num_classes = num_classes
+    self.num_classes = 1000
     self.xchannels   = xchannels
     self.layers      = nn.ModuleList( [ ConvBNReLU(xchannels[0], xchannels[1], 3, 1, 1, False, has_avg=False, has_bn=True, has_relu=True) ] )
     last_channel_idx = 1
