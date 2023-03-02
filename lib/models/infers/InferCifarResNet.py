@@ -163,9 +163,6 @@ class InferCifarResNet(nn.Module):
     for i, layer in enumerate(self.layers):
       x = layer( x )
     features = self.avgpool(x)
-    print(features.shape)
     features = features.view(features.size(0), -1)
-    print(features.shape)
-    assert False, self.classifier
     logits   = self.classifier(features)
     return features, logits

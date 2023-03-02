@@ -210,13 +210,13 @@ class GrayResNet(nn.Module):
   def forward(self, inputs):
     x = inputs
     for i, layer in enumerate(self.layers):
-      print(x.shape)
+      # print(x.shape)
       x = layer( x )
-    print(x.shape)
+    # print(x.shape)
     features = self.avgpool(x)
-    print(features.shape)
+    # print(features.shape)
     features = features.view(features.size(0), -1)
-    print(features.shape)
+    # print(features.shape)
     logits   = self.classifier(features)
-    assert False, self.classifier
+    # assert False, self.classifier
     return features, logits
