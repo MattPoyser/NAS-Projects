@@ -146,12 +146,9 @@ class InferCifarResNet(nn.Module):
     self.avgpool    = nn.AvgPool2d(8)
     # self.classifier = nn.Linear(self.xchannels[-1], num_classes)
     if pipe:
-      # hardcoded input and output values. 44 based on common option among runs.
-      # just a medium for high stride anyway
-      module = nn.Conv2d(57,44,kernel_size=3,stride=2)
+      module = nn.Conv2d(57,57,kernel_size=3,stride=2) # hardcoded input and output values. purely for downsampling
       self.layers.append ( module )
       self.classifier = nn.Linear(self.xchannels[-1], num_classes)
-
     else:
       self.classifier = nn.Linear(self.xchannels[-1]*7*7, num_classes)
 
