@@ -32,9 +32,9 @@ class ConvBNReLU(nn.Module):
 class ResNetBasicblock(nn.Module):
   num_conv  = 2
   expansion = 1
-  def __init__(self, iCs, stride, pipe=False):
+  def __init__(self, iCs, stride):
     super(ResNetBasicblock, self).__init__()
-    assert stride == 1 or stride == 2 or pipe, 'invalid stride {:}'.format(stride)
+    assert stride == 1 or stride == 2, 'invalid stride {:}'.format(stride)
     assert isinstance(iCs, tuple) or isinstance(iCs, list), 'invalid type of iCs : {:}'.format( iCs )
     assert len(iCs) == 3,'invalid lengths of iCs : {:}'.format(iCs)
     
@@ -146,8 +146,9 @@ class InferCifarResNet(nn.Module):
     self.avgpool    = nn.AvgPool2d(8)
     # self.classifier = nn.Linear(self.xchannels[-1], num_classes)
     if pipe:
-      module = block([57,44,44], 5, pipe=True) # hardcoded input and output values. 44 based on common option among
-      # runs. just a medium for high stride anyway
+      # hardcoded input and output values. 44 based on common option among runs.
+      # just a medium for high stride anyway
+      module = nn.Conv2d(57,44,kernel_size=3,stride=2)
       self.layers.append ( module )
       self.classifier = nn.Linear(self.xchannels[-1], num_classes)
 
