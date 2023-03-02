@@ -32,7 +32,7 @@ def main(args):
   grayscale = False
   if args.dataset == "mnist" or args.dataset == "fashion":
     grayscale = True
-  model_config = load_config(args.model_config, {'class_num': class_num}, logger, grayscale=grayscale)
+  model_config = load_config(args.model_config, {'class_num': class_num}, logger, grayscale=grayscale, pipe=args.pipe)
   optim_config = load_config(args.optim_config,
                                 {'class_num': class_num, 'KD_alpha': args.KD_alpha, 'KD_temperature': args.KD_temperature},
                                 logger)
@@ -40,8 +40,6 @@ def main(args):
   # load checkpoint
   teacher_base = load_net_from_checkpoint(args.KD_checkpoint)
   teacher      = torch.nn.DataParallel(teacher_base).cuda()
-  if args.pipe:
-      model_config["pipe"] = True
   base_model   = obtain_model(model_config)
   flop, param  = get_model_infos(base_model, xshape)
   logger.log('Student ====>>>>:\n{:}'.format(base_model))

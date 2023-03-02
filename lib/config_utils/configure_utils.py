@@ -38,7 +38,7 @@ def convert_param(original_lists):
     return outs
 
 
-def load_config(path, extra, logger, grayscale=False):
+def load_config(path, extra, logger, grayscale=False, pipe=False):
     path = str(path)
     if hasattr(logger, 'log'): logger.log(path)
     assert os.path.exists(path), 'Can not find {:}'.format(path)
@@ -46,6 +46,8 @@ def load_config(path, extra, logger, grayscale=False):
     with open(path, 'r') as f:
         data = json.load(f)
     content = {k: convert_param(v) for k, v in data.items()}
+    if pipe:
+        content["pipe"] = True
     if grayscale:
         content["xchannels"][0] = 3 # force model to have 3 channel input (even tho saved log had searched for 1 channel input). This is because we are tripling the channel input for grayscale datasets.
     assert extra is None or isinstance(extra, dict), 'invalid type of extra : {:}'.format(extra)
