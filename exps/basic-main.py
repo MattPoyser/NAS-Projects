@@ -36,7 +36,7 @@ def main(args):
     valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=args.batch_size, shuffle=False,
                                                num_workers=args.workers, pin_memory=True)
     # get configures
-    model_config = load_config(args.model_config, {'class_num': class_num}, logger, pipe=args.pipe)
+    model_config = load_config(args.model_config, {'class_num': class_num}, logger)
     optim_config = load_config(args.optim_config, {'class_num': class_num}, logger)
 
     if args.model_source == 'normal':
