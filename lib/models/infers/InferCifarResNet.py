@@ -151,7 +151,7 @@ class InferCifarResNet(nn.Module):
     #   self.classifier = nn.Linear(self.xchannels[-1], num_classes)
     # else:
     #   self.classifier = nn.Linear(self.xchannels[-1]*7*7, num_classes)
-    self.classifier = nn.Linear(self.xchannels[-1], num_classes)
+    self.classifier = nn.Linear(self.xchannels[-1]*7*7, num_classes)
 
     self.apply(initialize_resnet)
     if zero_init_residual:
