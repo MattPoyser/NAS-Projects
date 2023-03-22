@@ -13,8 +13,9 @@ def get_cifar_models(config):
   from .CifarResNet      import CifarResNet
   from .CifarWideResNet  import CifarWideResNet
   print(config)
-  
+
   super_type = getattr(config, 'super_type', 'basic')
+  assert False, (config, super_type)
   if super_type == 'basic':
     if config.arch == 'resnet':
       return CifarResNet(config.module, config.depth, config.class_num, config.zero_init_residual)
