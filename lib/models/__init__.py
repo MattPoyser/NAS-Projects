@@ -15,7 +15,6 @@ def get_cifar_models(config):
   print(config)
 
   super_type = getattr(config, 'super_type', 'basic')
-  assert False, (config, super_type)
   if super_type == 'basic':
     if config.arch == 'resnet':
       return CifarResNet(config.module, config.depth, config.class_num, config.zero_init_residual)
@@ -45,7 +44,6 @@ def get_cifar_models(config):
 def get_imagenet_models(config):
   super_type = getattr(config, 'super_type', 'basic')
   # NAS searched architecture
-  assert False, (config, super_type)
   if super_type.startswith('infer'):
     assert len(super_type.split('-')) == 2, 'invalid super_type : {:}'.format(super_type)
     infer_mode = super_type.split('-')[1]
