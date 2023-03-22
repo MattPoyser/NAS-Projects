@@ -44,7 +44,7 @@ def get_cifar_models(config):
 def get_imagenet_models(config):
   super_type = getattr(config, 'super_type', 'basic')
   # NAS searched architecture
-  assert False, config
+  assert False, (config, super_type)
   if super_type.startswith('infer'):
     assert len(super_type.split('-')) == 2, 'invalid super_type : {:}'.format(super_type)
     infer_mode = super_type.split('-')[1]
