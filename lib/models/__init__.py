@@ -45,6 +45,7 @@ def get_imagenet_models(config):
   super_type = getattr(config, 'super_type', 'basic')
   # NAS searched architecture
   if super_type.startswith('infer'):
+    assert False, config
     assert len(super_type.split('-')) == 2, 'invalid super_type : {:}'.format(super_type)
     infer_mode = super_type.split('-')[1]
     if infer_mode == 'shape':
